@@ -1,0 +1,14 @@
+#%RAML 0.8
+title: Some API
+version: v1
+baseUri: http://api.samplehost.com
+/helloWorld:
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "message" : "Hello World"
+              }
