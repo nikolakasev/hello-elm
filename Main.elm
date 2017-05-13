@@ -25,7 +25,8 @@ view model =
   div []
     [
       button [onClick Decrement] [text "-"],
-      div [] [text (toString model) ],
+      -- call tellMeIfNumber by turning the model which is Int into a Maybe first
+      div [] [text (tellMeIfNumber (Just model)) ],
       button [onClick Increment] [text "+"]
     ]
 
