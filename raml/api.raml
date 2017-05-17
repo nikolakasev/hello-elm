@@ -1,14 +1,83 @@
 #%RAML 0.8
-title: Some API
+#following https://github.com/Microsoft/api-guidelines/blob/vNext/Guidelines.md#9-collections
+title: Baker Backoffice Experience API
 version: v1
-baseUri: http://api.samplehost.com
-/helloWorld:
+baseUri: http://localhost
+
+/recipes:
+  /events:
+    get:
+      description: Get all possible events from the definition of each recipe
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                {
+                  "value": [
+                    {
+                      "recipe": "Carbonara cake",
+                      "events": [
+                        {
+                          "name": "SpaghettiCookedAndDrained",
+                          "ingredients": ["Spaghetti", "ResidualWaterInMil"]
+                        },
+                        {
+                          "name": "ChefInfo",
+                          "ingredients": ["ChefEmail", "ChefPhoneNumber", "ChefBirthDate"]
+                        }
+                      ]
+                    }
+                  ]
+                }
+
+  post:
+    description: Creates a new recipe
+    body:
+      application/json:
+        example: |
+          {
+            "id": "some"
+          }
+    responses:
+      201:
+        headers:
+          Location:
+            description: URI pointing to the location of the newly created recipe
+            example: http://localhost/recipes/abc123
+
+/processes:
   get:
+    description: Get a list of all processes known to Baker
     responses:
       200:
         body:
           application/json:
             example: |
               {
-                "message" : "Hello World"
+                "value" : [
+                  {"id": "436fdbcf-2505-4483-adc7-88b8e3b7c370", "recipe": "Carbonara cake", "started": "2017-05-24T15:55:11Z"},
+                  {"id": "e0e86e03-eb25-4ff7-ab48-a7653655e666", "recipe": "Carbonara cake", "started": "2017-04-20T15:53:06Z"},
+                  {"id": "2f144feb-90f5-4936-acab-9199838714ea", "recipe": "Turkey risotto", "started": "2017-01-24T10:43:13Z"}
+                ]
               }
+  /{process}:
+    get:
+      description: Get all events that have happened and accumulated ingredients for the process
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                {
+                  "events": [
+                    {"name": "OvenPreheated", "description": "The oven is pre-heated to the desired temperature", "at": "2017-05-24T15:55:11Z"},
+                    {"name": "SpaghettiCookedAndDrained", "at": "2017-05-24T15:57:09Z"}
+                  ],
+                  "ingredients": [
+                    {"name": "OvenTemperature", "value": "285"},
+                    {"name": "SpaghettiWeight", "value": "150"},
+                    {"name": "ChefName", "value": "John Doe"},
+                    {"name": "OrderId", "value": "ABC-341234"}
+                  ]
+                }
