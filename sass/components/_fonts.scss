@@ -16,7 +16,7 @@
 
 @font-face {
     font-family: "Roboto";
-    src: local(Roboto Regular), 
+    src: local(Roboto Regular),
         url("#{$roboto-font-path}Roboto-Regular.woff2") format("woff2"),
         url("#{$roboto-font-path}Roboto-Regular.woff") format("woff");
     font-weight: 400;
@@ -36,4 +36,20 @@
         url("#{$roboto-font-path}Roboto-Bold.woff2") format("woff2"),
         url("#{$roboto-font-path}Roboto-Bold.woff") format("woff");
     font-weight: 700;
+}
+
+@font-face {
+    font-family: "INGMe";
+    src: local(INGMe Regular),
+        url("#{$ing-me-font-path}Regular/INGMeWeb-Regular.woff2") format("woff2"),
+        url("#{$ing-me-font-path}Regular/INGMeWeb-Regular.woff") format("woff");
+    font-weight: normal;
+}
+
+@font-face {
+    font-family: "INGMe";
+    src: local(INGMe Bold),
+        url("#{$ing-me-font-path}Bold/INGMeWeb-Bold.woff2") format("woff2"),
+        url("#{$ing-me-font-path}Bold/INGMeWeb-Bold.woff") format("woff");
+    font-weight: bold;
 }

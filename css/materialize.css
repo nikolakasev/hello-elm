@@ -3240,12 +3240,20 @@ nav {
   font-family: "Roboto";
   src: local(Roboto Bold), url("../fonts/roboto/Roboto-Bold.woff2") format("woff2"), url("../fonts/roboto/Roboto-Bold.woff") format("woff");
   font-weight: 700; }
+@font-face {
+  font-family: "INGMe";
+  src: local(INGMe Regular), url("../fonts/INGMe/Regular/INGMeWeb-Regular.woff2") format("woff2"), url("../fonts/INGMe/Regular/INGMeWeb-Regular.woff") format("woff");
+  font-weight: normal; }
+@font-face {
+  font-family: "INGMe";
+  src: local(INGMe Bold), url("../fonts/INGMe/Bold/INGMeWeb-Bold.woff2") format("woff2"), url("../fonts/INGMe/Bold/INGMeWeb-Bold.woff") format("woff");
+  font-weight: bold; }
 a {
   text-decoration: none; }
 
 html {
   line-height: 1.5;
-  font-family: "Roboto", sans-serif;
+  font-family: "INGMe", sans-serif;
   font-weight: normal;
   color: rgba(0, 0, 0, 0.87); }
   @media only screen and (min-width: 0) {
