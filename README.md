@@ -35,3 +35,13 @@ Ctrl+G go to line
 Cmd+0 reset font size, Cmd-= increase, Cmd-- decrease
 
 Cmd-\ close tree-view
+
+Install sass on the Mac:
+
+**sudo gem install sass**
+
+Atom packages:
+
+elm-format
+
+atom-beautify
