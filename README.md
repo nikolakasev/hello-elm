@@ -40,6 +40,10 @@ Install sass on the Mac:
 
 **sudo gem install sass**
 
+To watch the Materialize sass folder and output as a CSS to the css folder:
+
+**sass --watch sass/:css/**
+
 Atom packages:
 
 elm-format
