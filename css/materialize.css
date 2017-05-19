@@ -1402,6 +1402,24 @@
 .deep-orange-text.text-accent-4 {
   color: #dd2c00 !important; }
 
+.ing-orange {
+  background-color: #FF6200 !important; }
+
+.ing-orange-text {
+  color: #FF6200 !important; }
+
+.ing-orange.lighten {
+  background-color: #ffc099 !important; }
+
+.ing-orange-text.text-lighten {
+  color: #ffc099 !important; }
+
+.ing-orange.darken {
+  background-color: #b34500 !important; }
+
+.ing-orange-text.text-darken {
+  color: #b34500 !important; }
+
 .brown {
   background-color: #795548 !important; }
 

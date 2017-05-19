@@ -292,6 +292,12 @@ $deep-orange: (
   "accent-4":    #dd2c00
 );
 
+$ing-orange: (
+  "base": #FF6200,
+  "lighten": #ffc099,
+  "darken": #b34500
+);
+
 $brown: (
   "base":       #795548,
   "lighten-5":  #efebe9,
@@ -355,6 +361,7 @@ $colors: (
   "amber": $amber,
   "orange": $orange,
   "deep-orange": $deep-orange,
+  "ing-orange": $ing-orange,
   "brown": $brown,
   "blue-grey": $blue-grey,
   "grey": $grey,
@@ -409,4 +416,3 @@ $colors: (
   @warn "Unknown `#{name}` in $colors.";
   @return null;
 }
-
