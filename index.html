@@ -12,20 +12,62 @@
   </head>
 
   <body>
-    <div id="elm"></div>
+
+    <div class="container">
+      <!-- Page Content goes here -->
+      <div id="elm"></div>
+
+      <div class="row">
+        <div class="col m4">
+          <div class="card">
+            <div class="progress">
+              <div class="indeterminate"></div>
+            </div>
+            <div class="card-content">
+              <h5 class="truncate">Carbonara cake</h5>
+              <blockquote>
+                Maybe happened.
+              </blockquote>
+              <p>Oven Temperature: 285</p>
+              <p>Spaghetti Weight: 180</p>
+              <p>Chef Name: John Doe</p>
+              <p>Order Id: ABC-341234</p>
+              <br/>
+              <a class="waves-effect waves-light btn-floating"><i class="small material-icons left">thumb_up</i>Approve</a>
+              <a class="waves-effect waves-light btn-floating red"><i class="small material-icons left">thumb_down</i>Reject</a>
+            </div>
+          </div>
+        </div>
+        <div class="col m4">
+          <div class="card">
+            <div class="card-content">
+              <h5 class="truncate">Turkey risotto</h5>
+              <blockquote>
+                Four-eye principle required.
+              </blockquote>
+              <p>Oven Temperature: 285</p>
+            </div>
+            <a class="btn-floating halfway-fab right"><i class="material-icons ing-orange">zoom_in</i></a>
+          </div>
+        </div>
+        <div class="col m4">
+          <div class="card">
+            <div class="card-content">
+              <p>I am a very simple card. I am good at containing small bits of information. I am convenient because I require little markup to use effectively.</p>
+            </div>
+            <div class="card-action">
+              <a href="#">This is a link</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </body>
   <script src="main.js"></script>
   <script>
     var node = document.getElementById('elm');
     var app = Elm.Main.embed(node);
   </script>
-
-  <div class="card-panel">
-    <span class="ing-orange-text">This is a card panel with orange text</span>
-  </div>
-
-  <div class="card-panel">
-    <span class="ing-orange-text text-darken">This is a card panel with dark text</span>
-  </div>
 
 </html>
