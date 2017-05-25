@@ -49,3 +49,11 @@ Atom packages:
 elm-format
 
 atom-beautify
+
+Installed Facebook's watchman:
+
+**brew install watchman**
+
+Then watching and making:
+
+**watchman -- trigger . buildme '*.elm' -- elm-make --output=main.js**

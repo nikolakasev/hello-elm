@@ -7924,14 +7924,19 @@ var _user$project$Main$tellMeIfNumber = function (maybeNumber) {
 var _user$project$Main$update = F2(
 	function (msg, model) {
 		var _p1 = msg;
-		if (_p1.ctor === 'Increment') {
-			return model + 1;
-		} else {
-			return model - 1;
-		}
+		return {ctor: '::', _0: 'added', _1: model};
 	});
-var _user$project$Main$model = 0;
-var _user$project$Main$Decrement = {ctor: 'Decrement'};
+var _user$project$Main$model = {ctor: '[]'};
+var _user$project$Main$Ingredient = F2(
+	function (a, b) {
+		return {name: a, value: b};
+	});
+var _user$project$Main$ActionableProcess = F2(
+	function (a, b) {
+		return {id: a, action: b};
+	});
+var _user$project$Main$FourEyePrinciple = {ctor: 'FourEyePrinciple'};
+var _user$project$Main$Doubt = {ctor: 'Doubt'};
 var _user$project$Main$Increment = {ctor: 'Increment'};
 var _user$project$Main$view = function (model) {
 	return A2(
@@ -7943,7 +7948,7 @@ var _user$project$Main$view = function (model) {
 				_elm_lang$html$Html$button,
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html_Events$onClick(_user$project$Main$Decrement),
+					_0: _elm_lang$html$Html_Events$onClick(_user$project$Main$Increment),
 					_1: {ctor: '[]'}
 				},
 				{
@@ -7959,8 +7964,8 @@ var _user$project$Main$view = function (model) {
 					{
 						ctor: '::',
 						_0: _elm_lang$html$Html$text(
-							_user$project$Main$tellMeIfNumber(
-								_elm_lang$core$Maybe$Just(model))),
+							_elm_lang$core$Basics$toString(
+								_elm_lang$core$List$length(model))),
 						_1: {ctor: '[]'}
 					}),
 				_1: {
@@ -7983,7 +7988,19 @@ var _user$project$Main$view = function (model) {
 		});
 };
 var _user$project$Main$main = _elm_lang$html$Html$beginnerProgram(
-	{view: _user$project$Main$view, model: 0, update: _user$project$Main$update})();
+	{
+		view: _user$project$Main$view,
+		model: {
+			ctor: '::',
+			_0: 'one',
+			_1: {
+				ctor: '::',
+				_0: 'two',
+				_1: {ctor: '[]'}
+			}
+		},
+		update: _user$project$Main$update
+	})();
 
 var Elm = {};
 Elm['Main'] = Elm['Main'] || {};
