@@ -1,12 +1,17 @@
 module Main exposing (..)
 
-import Html exposing (Html, button, div, text, h5, blockquote, p)
-import Html.Attributes exposing (class)
+import Html exposing (Html, button, div, text, h5, blockquote, p, br, a, i, span)
+import Html.Attributes exposing (class, style)
+import Html.Events exposing (onClick)
 
 
 main : Program Never (List ActionableProcess) Msg
 main =
     Html.beginnerProgram { view = view, model = [ someProcess ], update = update }
+
+
+type alias Id =
+    String
 
 
 type alias Ingredient =
@@ -20,7 +25,7 @@ type Action
 
 
 type alias ActionableProcess =
-    { id : String, name : String, action : Action, info : List Ingredient }
+    { id : Id, name : String, action : Action, info : List Ingredient }
 
 
 someProcess : ActionableProcess
@@ -38,13 +43,17 @@ model =
 
 
 type Msg
-    = Increment
+    = Approved Id
+    | Rejected Id
 
 
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        Increment ->
+        Approved id ->
+            model
+
+        Rejected id ->
             model
 
 
@@ -57,11 +66,13 @@ actionableCard : ActionableProcess -> Html Msg
 actionableCard forProcess =
     div [ class "col m4" ]
         [ div [ class "card" ]
-            [ div [ class "card-content" ]
+            [ div [ class "card-content" ] <|
                 [ h5 [ class "truncate" ] [ text forProcess.name ]
                 , blockquote [] [ text <| actionToText forProcess.action ]
                 , supportingInfo forProcess.info
+                , br [] []
                 ]
+                    ++ actionButtons forProcess.id
             ]
         ]
 
@@ -79,9 +90,29 @@ actionToText action =
             "Second opinion required."
 
 
-supportingInfo : List Ingredient -> Html Msg
+supportingInfo : List Ingredient -> Html msg
 supportingInfo ingredients =
     div [] <| List.map (\i -> p [] [ text <| String.join ": " [ i.name, i.value ] ]) ingredients
+
+
+actionButtons : Id -> List (Html Msg)
+actionButtons processId =
+    [ a
+        [ class "waves-effect waves-light btn-floating"
+        , onClick <| Approved processId
+        ]
+        [ i [ class "small material-icons left" ] [ text "thumb_up" ]
+        , text "Approve"
+        ]
+    , span [] [ text " " ] -- put some space between the buttons
+    , a
+        [ class "waves-effect waves-light btn-floating red"
+        , onClick <| Rejected processId
+        ]
+        [ i [ class "small material-icons left" ] [ text "thumb_down" ]
+        , text "Reject"
+        ]
+    ]
 
 
 tellMeIfNumber : Maybe Int -> String

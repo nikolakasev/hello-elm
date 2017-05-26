@@ -12,6 +12,8 @@ Then open index.html.
 
 Useful links:
 - https://github.com/izdi/elm-cheat-sheet
+- https://www.gitbook.com/book/sporto/elm-tutorial/details
+- http://klaftertief.github.io/elm-search/
 
 Shortcuts in Atom:
 
