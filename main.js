@@ -8265,11 +8265,14 @@ var _user$project$Main$view = function (model) {
 			_0: _elm_lang$html$Html_Attributes$class('row'),
 			_1: {ctor: '[]'}
 		},
-		{
-			ctor: '::',
-			_0: _user$project$Main$actionableCard(_user$project$Main$someProcess),
-			_1: {ctor: '[]'}
-		});
+		A2(
+			_elm_lang$core$List$map,
+			_user$project$Main$actionableCard,
+			{
+				ctor: '::',
+				_0: _user$project$Main$someProcess,
+				_1: {ctor: '[]'}
+			}));
 };
 var _user$project$Main$main = _elm_lang$html$Html$beginnerProgram(
 	{

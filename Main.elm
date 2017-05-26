@@ -50,12 +50,10 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    div [ class "row" ]
-        [ actionableCard <| someProcess
-        ]
+    div [ class "row" ] (List.map actionableCard [ someProcess ])
 
 
-actionableCard : ActionableProcess -> Html msg
+actionableCard : ActionableProcess -> Html Msg
 actionableCard forProcess =
     div [ class "col m4" ]
         [ div [ class "card" ]
