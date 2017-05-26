@@ -1,6 +1,6 @@
 module Main exposing (..)
 
-import Html exposing (Html, button, div, text, h5, blockquote)
+import Html exposing (Html, button, div, text, h5, blockquote, p)
 import Html.Attributes exposing (class)
 
 
@@ -50,7 +50,7 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    div [ class "row" ] (List.map actionableCard [ someProcess ])
+    div [ class "row" ] <| List.map actionableCard [ someProcess ]
 
 
 actionableCard : ActionableProcess -> Html Msg
@@ -60,6 +60,7 @@ actionableCard forProcess =
             [ div [ class "card-content" ]
                 [ h5 [ class "truncate" ] [ text forProcess.name ]
                 , blockquote [] [ text <| actionToText forProcess.action ]
+                , supportingInfo forProcess.info
                 ]
             ]
         ]
@@ -76,6 +77,11 @@ actionToText action =
 
         SecondOpinion ->
             "Second opinion required."
+
+
+supportingInfo : List Ingredient -> Html Msg
+supportingInfo ingredients =
+    div [] <| List.map (\i -> p [] [ text <| String.join ": " [ i.name, i.value ] ]) ingredients
 
 
 tellMeIfNumber : Maybe Int -> String
