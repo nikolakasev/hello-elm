@@ -8340,6 +8340,7 @@ var _elm_lang$html$Html_Events$Options = F2(
 		return {stopPropagation: a, preventDefault: b};
 	});
 
+var _user$project$Main$processes = '{\n    \"value\" : [\n        {\n          \"id\": \"436fdbcf-2505-4483-adc7-88b8e3b7c370\",\n          \"recipe\": \"Carbonara cake\",\n          \"started\": \"2017-05-24T15:55:11Z\",\n          \"events\": [\"OvenPreheated\", \"ChefInfo\"],\n          \"ingredients\": [\n            {\"name\": \"OvenTemperature\", \"value\": \"285\"},\n            {\"name\": \"SpaghettiWeight\", \"value\": \"150\"},\n            {\"name\": \"ChefName\", \"value\": \"John Doe\"},\n            {\"name\": \"OrderId\", \"value\": \"ABC-341234\"}\n          ]\n        },\n        {\n          \"id\": \"e0e86e03-eb25-4ff7-ab48-a7653655e666\",\n          \"recipe\": \"Carbonara cake\",\n          \"started\": \"2017-04-20T15:53:06Z\",\n          \"events\": [\"OvenPreheated\", \"Maybe\"],\n          \"ingredients\": [\n            {\"name\": \"OvenTemperature\", \"value\": \"285\"},\n            {\"name\": \"SpaghettiWeight\", \"value\": \"150\"}\n          ]\n        }]\n    }';
 var _user$project$Main$tellMeIfNumber = function (maybeNumber) {
 	var _p0 = maybeNumber;
 	if (_p0.ctor === 'Nothing') {
@@ -8406,6 +8407,15 @@ var _user$project$Main$Ingredient = F2(
 	function (a, b) {
 		return {name: a, value: b};
 	});
+var _user$project$Main$ingredientDecoder = A3(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+	'value',
+	_elm_lang$core$Json_Decode$string,
+	A3(
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+		'name',
+		_elm_lang$core$Json_Decode$string,
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Main$Ingredient)));
 var _user$project$Main$ActionableProcess = F4(
 	function (a, b, c, d) {
 		return {id: a, name: b, action: c, info: d};
@@ -8434,6 +8444,36 @@ var _user$project$Main$userDecoder = A2(
 		_elm_lang$core$Json_Decode$int,
 		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Main$User)));
 var _user$project$Main$result = A2(_elm_lang$core$Json_Decode$decodeString, _user$project$Main$userDecoder, '\n          {\n            \"id\": 123,\n            \"email\": \"sam@example.com\",\n            \"profile\": {\"name\": \"Samuel\"}\n          }\n        ');
+var _user$project$Main$Process = F4(
+	function (a, b, c, d) {
+		return {id: a, recipe: b, events: c, ingredients: d};
+	});
+var _user$project$Main$processDecoder = A3(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+	'ingredients',
+	_elm_lang$core$Json_Decode$list(_user$project$Main$ingredientDecoder),
+	A3(
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+		'events',
+		_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string),
+		A3(
+			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+			'recipe',
+			_elm_lang$core$Json_Decode$string,
+			A3(
+				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+				'id',
+				_elm_lang$core$Json_Decode$string,
+				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Main$Process)))));
+var _user$project$Main$Processes = function (a) {
+	return {value: a};
+};
+var _user$project$Main$processesDecoder = A3(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+	'value',
+	_elm_lang$core$Json_Decode$list(_user$project$Main$processDecoder),
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Main$Processes));
+var _user$project$Main$resulto = A2(_elm_lang$core$Json_Decode$decodeString, _user$project$Main$processesDecoder, _user$project$Main$processes);
 var _user$project$Main$SecondOpinion = {ctor: 'SecondOpinion'};
 var _user$project$Main$FourEyePrinciple = {ctor: 'FourEyePrinciple'};
 var _user$project$Main$Doubt = {ctor: 'Doubt'};
@@ -8643,7 +8683,7 @@ var _user$project$Main$main = _elm_lang$html$Html$beginnerProgram(
 	})();
 
 var _user$project$Repl$t_s_o_l = {ctor: '_Tuple0'};
-var _user$project$Repl$d_e_l_t_r_o_n_3_0_3_0 = _user$project$Main$result;
+var _user$project$Repl$d_e_l_t_r_o_n_3_0_3_0 = _user$project$Main$resulto;
 
 var Elm = {};
 Elm['Repl'] = Elm['Repl'] || {};

@@ -3,7 +3,7 @@ module Main exposing (..)
 import Html exposing (Html, button, div, text, h5, blockquote, p, br, a, i, span)
 import Html.Attributes exposing (class, style)
 import Html.Events exposing (onClick)
-import Json.Decode exposing (int, string, at, Decoder, decodeString)
+import Json.Decode exposing (int, string, at, list, Decoder, decodeString)
 import Json.Decode.Pipeline exposing (decode, required, custom)
 
 
@@ -149,3 +149,67 @@ result =
             "profile": {"name": "Samuel"}
           }
         """
+
+
+processes : String
+processes =
+    """{
+    "value" : [
+        {
+          "id": "436fdbcf-2505-4483-adc7-88b8e3b7c370",
+          "recipe": "Carbonara cake",
+          "started": "2017-05-24T15:55:11Z",
+          "events": ["OvenPreheated", "ChefInfo"],
+          "ingredients": [
+            {"name": "OvenTemperature", "value": "285"},
+            {"name": "SpaghettiWeight", "value": "150"},
+            {"name": "ChefName", "value": "John Doe"},
+            {"name": "OrderId", "value": "ABC-341234"}
+          ]
+        },
+        {
+          "id": "e0e86e03-eb25-4ff7-ab48-a7653655e666",
+          "recipe": "Carbonara cake",
+          "started": "2017-04-20T15:53:06Z",
+          "events": ["OvenPreheated", "Maybe"],
+          "ingredients": [
+            {"name": "OvenTemperature", "value": "285"},
+            {"name": "SpaghettiWeight", "value": "150"}
+          ]
+        }]
+    }"""
+
+
+type alias Process =
+    { id : String, recipe : String, events : List String, ingredients : List Ingredient }
+
+
+processDecoder : Decoder Process
+processDecoder =
+    decode Process
+        |> required "id" string
+        |> required "recipe" string
+        |> required "events" (list string)
+        |> required "ingredients" (list ingredientDecoder)
+
+
+type alias Processes =
+    { value : List Process }
+
+
+processesDecoder : Decoder Processes
+processesDecoder =
+    decode Processes
+        |> required "value" (list processDecoder)
+
+
+ingredientDecoder : Decoder Ingredient
+ingredientDecoder =
+    decode Ingredient
+        |> required "name" string
+        |> required "value" string
+
+
+resulto : Result String Processes
+resulto =
+    decodeString processesDecoder processes
