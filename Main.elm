@@ -3,6 +3,8 @@ module Main exposing (..)
 import Html exposing (Html, button, div, text, h5, blockquote, p, br, a, i, span)
 import Html.Attributes exposing (class, style)
 import Html.Events exposing (onClick)
+import Json.Decode exposing (int, string, at, Decoder, decodeString)
+import Json.Decode.Pipeline exposing (decode, required, custom)
 
 
 main : Program Never (List ActionableProcess) Msg
@@ -123,3 +125,27 @@ tellMeIfNumber maybeNumber =
 
         Just number ->
             "Yup! The number is " ++ toString number
+
+
+type alias User =
+    { id : Int, name : String }
+
+
+userDecoder : Decoder User
+userDecoder =
+    decode User
+        |> required "id" int
+        |> custom (at [ "profile", "name" ] string)
+
+
+result : Result String User
+result =
+    decodeString
+        userDecoder
+        """
+          {
+            "id": 123,
+            "email": "sam@example.com",
+            "profile": {"name": "Samuel"}
+          }
+        """
