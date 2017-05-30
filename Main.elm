@@ -5,6 +5,8 @@ import Html.Attributes exposing (class, style)
 import Html.Events exposing (onClick)
 import Json.Decode exposing (int, string, at, list, Decoder, decodeString)
 import Json.Decode.Pipeline exposing (decode, required, custom)
+import Json.Decode.Extra exposing (date)
+import Date exposing (Date)
 
 
 main : Program Never (List ActionableProcess) Msg
@@ -181,7 +183,7 @@ processes =
 
 
 type alias Process =
-    { id : String, recipe : String, events : List String, ingredients : List Ingredient }
+    { id : String, recipe : String, events : List String, started : Date, ingredients : List Ingredient }
 
 
 processDecoder : Decoder Process
@@ -190,6 +192,7 @@ processDecoder =
         |> required "id" string
         |> required "recipe" string
         |> required "events" (list string)
+        |> required "started" date
         |> required "ingredients" (list ingredientDecoder)
 
 
