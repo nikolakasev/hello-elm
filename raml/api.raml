@@ -27,6 +27,10 @@ baseUri: http://localhost
                           "ingredients": ["ChefEmail", "ChefPhoneNumber", "ChefBirthDate"]
                         },
                         {
+                          "name": "OvenFailure",
+                          "ingredients": ["Reason"]
+                        },
+                        {
                           "name": "Maybe",
                           "description": "Give your advice",
                           "ingredients": ["AnswerWithYesOrNo"]
@@ -37,7 +41,7 @@ baseUri: http://localhost
                 }
 /processes:
   get:
-    description: Get a list of all processes known to Baker
+    description: Get a list of running processes
     responses:
       200:
         body:
@@ -49,33 +53,36 @@ baseUri: http://localhost
                     "id": "436fdbcf-2505-4483-adc7-88b8e3b7c370",
                     "recipe": "Carbonara cake",
                     "started": "2017-05-24T15:55:11Z",
-                    "events": ["OvenPreheated", "ChefInfo"],
-                    "ingredients": [
-                      {"name": "OvenTemperature", "value": "285"},
-                      {"name": "SpaghettiWeight", "value": "150"},
-                      {"name": "ChefName", "value": "John Doe"},
-                      {"name": "OrderId", "value": "ABC-341234"}
-                    ]
+                    "events": ["OvenPreheated", "ChefInfo"]
                   },
                   {
                     "id": "e0e86e03-eb25-4ff7-ab48-a7653655e666",
                     "recipe": "Carbonara cake",
                     "started": "2017-04-20T15:53:06Z",
-                    "events": ["OvenPreheated", "Maybe"],
-                    "ingredients": [
-                      {"name": "OvenTemperature", "value": "285"},
-                      {"name": "SpaghettiWeight", "value": "150"}
-                    ]
+                    "events": ["OvenPreheated", "Maybe"]
                   },
                   {
                     "id": "2f144feb-90f5-4936-acab-9199838714ea",
                     "recipe": "Turkey risotto",
                     "started": "2017-01-24T10:43:13Z",
-                    "events": ["ChefInfo"],
-                    "ingredients": [
-                      {"name": "ChefName", "value": "Marry Poppins"},
-                      {"name": "OrderId", "value": "CDEF-98432"}
-                    ]
+                    "events": ["ChefInfo"]
                   }
+                ]
+              }
+/process/{id}:
+  get:
+    description: Get a list of ingredients for a given process
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "id": "e0e86e03-eb25-4ff7-ab48-a7653655e666",
+                "ingredients": [
+                  {"name": "OvenTemperature", "value": "285"},
+                  {"name": "SpaghettiWeight", "value": "150"},
+                  {"name": "ChefName", "value": "John Doe"},
+                  {"name": "OrderId", "value": "ABC-341234"}
                 ]
               }

@@ -3,10 +3,11 @@ module Main exposing (..)
 import Html exposing (Html, button, div, text, h5, blockquote, p, br, a, i, span)
 import Html.Attributes exposing (class, style)
 import Html.Events exposing (onClick)
-import Json.Decode exposing (int, string, at, list, Decoder, decodeString)
-import Json.Decode.Pipeline exposing (decode, required, custom)
+import Json.Decode exposing (int, string, at, list, map, Decoder, decodeString)
+import Json.Decode.Pipeline exposing (decode, required, optional, custom)
 import Json.Decode.Extra exposing (date)
 import Date exposing (Date)
+import Dict exposing (Dict)
 
 
 main : Program Never (List ActionableProcess) Msg
@@ -119,40 +120,6 @@ actionButtons processId =
     ]
 
 
-tellMeIfNumber : Maybe Int -> String
-tellMeIfNumber maybeNumber =
-    case maybeNumber of
-        Nothing ->
-            "Nope, no number"
-
-        Just number ->
-            "Yup! The number is " ++ toString number
-
-
-type alias User =
-    { id : Int, name : String }
-
-
-userDecoder : Decoder User
-userDecoder =
-    decode User
-        |> required "id" int
-        |> custom (at [ "profile", "name" ] string)
-
-
-result : Result String User
-result =
-    decodeString
-        userDecoder
-        """
-          {
-            "id": 123,
-            "email": "sam@example.com",
-            "profile": {"name": "Samuel"}
-          }
-        """
-
-
 processes : String
 processes =
     """{
@@ -161,43 +128,32 @@ processes =
           "id": "436fdbcf-2505-4483-adc7-88b8e3b7c370",
           "recipe": "Carbonara cake",
           "started": "2017-05-24T15:55:11Z",
-          "events": ["OvenPreheated", "ChefInfo"],
-          "ingredients": [
-            {"name": "OvenTemperature", "value": "285"},
-            {"name": "SpaghettiWeight", "value": "150"},
-            {"name": "ChefName", "value": "John Doe"},
-            {"name": "OrderId", "value": "ABC-341234"}
-          ]
+          "events": ["OvenPreheated", "ChefInfo"]
         },
         {
           "id": "e0e86e03-eb25-4ff7-ab48-a7653655e666",
           "recipe": "Carbonara cake",
           "started": "2017-04-20T15:53:06Z",
-          "events": ["OvenPreheated", "Maybe"],
-          "ingredients": [
-            {"name": "OvenTemperature", "value": "285"},
-            {"name": "SpaghettiWeight", "value": "150"}
-          ]
+          "events": ["OvenPreheated", "OvenFailure"]
         }]
     }"""
 
 
-type alias Process =
-    { id : String, recipe : String, events : List String, started : Date, ingredients : List Ingredient }
+type alias ProcessWithEvents =
+    { id : String, recipe : String, started : Date, events : List String }
 
 
-processDecoder : Decoder Process
+processDecoder : Decoder ProcessWithEvents
 processDecoder =
-    decode Process
+    decode ProcessWithEvents
         |> required "id" string
         |> required "recipe" string
-        |> required "events" (list string)
         |> required "started" date
-        |> required "ingredients" (list ingredientDecoder)
+        |> required "events" (list string)
 
 
 type alias Processes =
-    { value : List Process }
+    { value : List ProcessWithEvents }
 
 
 processesDecoder : Decoder Processes
@@ -216,3 +172,27 @@ ingredientDecoder =
 resulto : Result String Processes
 resulto =
     decodeString processesDecoder processes
+
+
+type alias ActionableRecipe =
+    { eventOfInterest : String, action : Action, compensatingEvent : String }
+
+
+filterProcess : String -> String -> List ProcessWithEvents
+filterProcess forRecipe withEvent =
+    case resulto of
+        Ok processes ->
+            List.filter (\p -> List.member withEvent p.events && p.recipe == forRecipe) processes.value
+
+        _ ->
+            []
+
+
+config : Dict String ActionableRecipe
+config =
+    Dict.fromList [ ( "Carbonara cake", { eventOfInterest = "OvenFailure", action = Doubt, compensatingEvent = "Maybe" } ) ]
+
+
+determineActions : Dict String ActionableRecipe -> Dict String (List ProcessWithEvents)
+determineActions config =
+    Dict.map (\recipeName actionableRecipe -> filterProcess recipeName actionableRecipe.eventOfInterest) config

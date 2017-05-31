@@ -9060,19 +9060,8 @@ var _elm_lang$html$Html_Events$Options = F2(
 		return {stopPropagation: a, preventDefault: b};
 	});
 
-var _user$project$Main$processes = '{\n    \"value\" : [\n        {\n          \"id\": \"436fdbcf-2505-4483-adc7-88b8e3b7c370\",\n          \"recipe\": \"Carbonara cake\",\n          \"started\": \"2017-05-24T15:55:11Z\",\n          \"events\": [\"OvenPreheated\", \"ChefInfo\"],\n          \"ingredients\": [\n            {\"name\": \"OvenTemperature\", \"value\": \"285\"},\n            {\"name\": \"SpaghettiWeight\", \"value\": \"150\"},\n            {\"name\": \"ChefName\", \"value\": \"John Doe\"},\n            {\"name\": \"OrderId\", \"value\": \"ABC-341234\"}\n          ]\n        },\n        {\n          \"id\": \"e0e86e03-eb25-4ff7-ab48-a7653655e666\",\n          \"recipe\": \"Carbonara cake\",\n          \"started\": \"2017-04-20T15:53:06Z\",\n          \"events\": [\"OvenPreheated\", \"Maybe\"],\n          \"ingredients\": [\n            {\"name\": \"OvenTemperature\", \"value\": \"285\"},\n            {\"name\": \"SpaghettiWeight\", \"value\": \"150\"}\n          ]\n        }]\n    }';
-var _user$project$Main$tellMeIfNumber = function (maybeNumber) {
-	var _p0 = maybeNumber;
-	if (_p0.ctor === 'Nothing') {
-		return 'Nope, no number';
-	} else {
-		return A2(
-			_elm_lang$core$Basics_ops['++'],
-			'Yup! The number is ',
-			_elm_lang$core$Basics$toString(_p0._0));
-	}
-};
-var _user$project$Main$supportingInfo = function (ingredients) {
+var _nikolakasev$hello_elm$Main$processes = '{\n    \"value\" : [\n        {\n          \"id\": \"436fdbcf-2505-4483-adc7-88b8e3b7c370\",\n          \"recipe\": \"Carbonara cake\",\n          \"started\": \"2017-05-24T15:55:11Z\",\n          \"events\": [\"OvenPreheated\", \"ChefInfo\"]\n        },\n        {\n          \"id\": \"e0e86e03-eb25-4ff7-ab48-a7653655e666\",\n          \"recipe\": \"Carbonara cake\",\n          \"started\": \"2017-04-20T15:53:06Z\",\n          \"events\": [\"OvenPreheated\", \"OvenFailure\"]\n        }]\n    }';
+var _nikolakasev$hello_elm$Main$supportingInfo = function (ingredients) {
 	return A2(
 		_elm_lang$html$Html$div,
 		{ctor: '[]'},
@@ -9102,9 +9091,9 @@ var _user$project$Main$supportingInfo = function (ingredients) {
 			},
 			ingredients));
 };
-var _user$project$Main$actionToText = function (action) {
-	var _p1 = action;
-	switch (_p1.ctor) {
+var _nikolakasev$hello_elm$Main$actionToText = function (action) {
+	var _p0 = action;
+	switch (_p0.ctor) {
 		case 'Doubt':
 			return 'Maybe happened.';
 		case 'FourEyePrinciple':
@@ -9113,21 +9102,21 @@ var _user$project$Main$actionToText = function (action) {
 			return 'Second opinion required.';
 	}
 };
-var _user$project$Main$update = F2(
+var _nikolakasev$hello_elm$Main$update = F2(
 	function (msg, model) {
-		var _p2 = msg;
-		if (_p2.ctor === 'Approved') {
+		var _p1 = msg;
+		if (_p1.ctor === 'Approved') {
 			return model;
 		} else {
 			return model;
 		}
 	});
-var _user$project$Main$model = {ctor: '[]'};
-var _user$project$Main$Ingredient = F2(
+var _nikolakasev$hello_elm$Main$model = {ctor: '[]'};
+var _nikolakasev$hello_elm$Main$Ingredient = F2(
 	function (a, b) {
 		return {name: a, value: b};
 	});
-var _user$project$Main$ingredientDecoder = A3(
+var _nikolakasev$hello_elm$Main$ingredientDecoder = A3(
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
 	'value',
 	_elm_lang$core$Json_Decode$string,
@@ -9135,76 +9124,75 @@ var _user$project$Main$ingredientDecoder = A3(
 		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
 		'name',
 		_elm_lang$core$Json_Decode$string,
-		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Main$Ingredient)));
-var _user$project$Main$ActionableProcess = F4(
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_nikolakasev$hello_elm$Main$Ingredient)));
+var _nikolakasev$hello_elm$Main$ActionableProcess = F4(
 	function (a, b, c, d) {
 		return {id: a, name: b, action: c, info: d};
 	});
-var _user$project$Main$User = F2(
-	function (a, b) {
-		return {id: a, name: b};
+var _nikolakasev$hello_elm$Main$ProcessWithEvents = F4(
+	function (a, b, c, d) {
+		return {id: a, recipe: b, started: c, events: d};
 	});
-var _user$project$Main$userDecoder = A2(
-	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$custom,
-	A2(
-		_elm_lang$core$Json_Decode$at,
-		{
-			ctor: '::',
-			_0: 'profile',
-			_1: {
-				ctor: '::',
-				_0: 'name',
-				_1: {ctor: '[]'}
-			}
-		},
-		_elm_lang$core$Json_Decode$string),
-	A3(
-		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-		'id',
-		_elm_lang$core$Json_Decode$int,
-		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Main$User)));
-var _user$project$Main$result = A2(_elm_lang$core$Json_Decode$decodeString, _user$project$Main$userDecoder, '\n          {\n            \"id\": 123,\n            \"email\": \"sam@example.com\",\n            \"profile\": {\"name\": \"Samuel\"}\n          }\n        ');
-var _user$project$Main$Process = F5(
-	function (a, b, c, d, e) {
-		return {id: a, recipe: b, events: c, started: d, ingredients: e};
-	});
-var _user$project$Main$processDecoder = A3(
+var _nikolakasev$hello_elm$Main$processDecoder = A3(
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-	'ingredients',
-	_elm_lang$core$Json_Decode$list(_user$project$Main$ingredientDecoder),
+	'events',
+	_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string),
 	A3(
 		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
 		'started',
 		_elm_community$json_extra$Json_Decode_Extra$date,
 		A3(
 			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-			'events',
-			_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string),
+			'recipe',
+			_elm_lang$core$Json_Decode$string,
 			A3(
 				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-				'recipe',
+				'id',
 				_elm_lang$core$Json_Decode$string,
-				A3(
-					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-					'id',
-					_elm_lang$core$Json_Decode$string,
-					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Main$Process))))));
-var _user$project$Main$Processes = function (a) {
+				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_nikolakasev$hello_elm$Main$ProcessWithEvents)))));
+var _nikolakasev$hello_elm$Main$Processes = function (a) {
 	return {value: a};
 };
-var _user$project$Main$processesDecoder = A3(
+var _nikolakasev$hello_elm$Main$processesDecoder = A3(
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
 	'value',
-	_elm_lang$core$Json_Decode$list(_user$project$Main$processDecoder),
-	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Main$Processes));
-var _user$project$Main$resulto = A2(_elm_lang$core$Json_Decode$decodeString, _user$project$Main$processesDecoder, _user$project$Main$processes);
-var _user$project$Main$SecondOpinion = {ctor: 'SecondOpinion'};
-var _user$project$Main$FourEyePrinciple = {ctor: 'FourEyePrinciple'};
-var _user$project$Main$Doubt = {ctor: 'Doubt'};
-var _user$project$Main$someProcess = {
+	_elm_lang$core$Json_Decode$list(_nikolakasev$hello_elm$Main$processDecoder),
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_nikolakasev$hello_elm$Main$Processes));
+var _nikolakasev$hello_elm$Main$resulto = A2(_elm_lang$core$Json_Decode$decodeString, _nikolakasev$hello_elm$Main$processesDecoder, _nikolakasev$hello_elm$Main$processes);
+var _nikolakasev$hello_elm$Main$filterProcess = F2(
+	function (forRecipe, withEvent) {
+		var _p2 = _nikolakasev$hello_elm$Main$resulto;
+		if (_p2.ctor === 'Ok') {
+			return A2(
+				_elm_lang$core$List$filter,
+				function (p) {
+					return A2(_elm_lang$core$List$member, withEvent, p.events) && _elm_lang$core$Native_Utils.eq(p.recipe, forRecipe);
+				},
+				_p2._0.value);
+		} else {
+			return {ctor: '[]'};
+		}
+	});
+var _nikolakasev$hello_elm$Main$determineActions = function (config) {
+	return A2(
+		_elm_lang$core$Dict$map,
+		F2(
+			function (recipeName, actionableRecipe) {
+				return A2(_nikolakasev$hello_elm$Main$filterProcess, recipeName, actionableRecipe.eventOfInterest);
+			}),
+		config);
+};
+var _nikolakasev$hello_elm$Main$ActionableRecipe = F3(
+	function (a, b, c) {
+		return {eventOfInterest: a, action: b, compensatingEvent: c};
+	});
+var _nikolakasev$hello_elm$Main$SecondOpinion = {ctor: 'SecondOpinion'};
+var _nikolakasev$hello_elm$Main$FourEyePrinciple = {ctor: 'FourEyePrinciple'};
+var _nikolakasev$hello_elm$Main$Doubt = {ctor: 'Doubt'};
+var _nikolakasev$hello_elm$Main$someProcess = {
 	id: '7fbedbdf-c017-4fc9-b30a-3d356e12d0bf',
 	name: 'Carbonara cake',
-	action: _user$project$Main$Doubt,
+	action: _nikolakasev$hello_elm$Main$Doubt,
 	info: {
 		ctor: '::',
 		_0: {name: 'Oven Temperature', value: '285'},
@@ -9215,13 +9203,23 @@ var _user$project$Main$someProcess = {
 		}
 	}
 };
-var _user$project$Main$Rejected = function (a) {
+var _nikolakasev$hello_elm$Main$config = _elm_lang$core$Dict$fromList(
+	{
+		ctor: '::',
+		_0: {
+			ctor: '_Tuple2',
+			_0: 'Carbonara cake',
+			_1: {eventOfInterest: 'OvenFailure', action: _nikolakasev$hello_elm$Main$Doubt, compensatingEvent: 'Maybe'}
+		},
+		_1: {ctor: '[]'}
+	});
+var _nikolakasev$hello_elm$Main$Rejected = function (a) {
 	return {ctor: 'Rejected', _0: a};
 };
-var _user$project$Main$Approved = function (a) {
+var _nikolakasev$hello_elm$Main$Approved = function (a) {
 	return {ctor: 'Approved', _0: a};
 };
-var _user$project$Main$actionButtons = function (processId) {
+var _nikolakasev$hello_elm$Main$actionButtons = function (processId) {
 	return {
 		ctor: '::',
 		_0: A2(
@@ -9232,7 +9230,7 @@ var _user$project$Main$actionButtons = function (processId) {
 				_1: {
 					ctor: '::',
 					_0: _elm_lang$html$Html_Events$onClick(
-						_user$project$Main$Approved(processId)),
+						_nikolakasev$hello_elm$Main$Approved(processId)),
 					_1: {ctor: '[]'}
 				}
 			},
@@ -9276,7 +9274,7 @@ var _user$project$Main$actionButtons = function (processId) {
 						_1: {
 							ctor: '::',
 							_0: _elm_lang$html$Html_Events$onClick(
-								_user$project$Main$Rejected(processId)),
+								_nikolakasev$hello_elm$Main$Rejected(processId)),
 							_1: {ctor: '[]'}
 						}
 					},
@@ -9305,7 +9303,7 @@ var _user$project$Main$actionButtons = function (processId) {
 		}
 	};
 };
-var _user$project$Main$actionableCard = function (forProcess) {
+var _nikolakasev$hello_elm$Main$actionableCard = function (forProcess) {
 	return A2(
 		_elm_lang$html$Html$div,
 		{
@@ -9355,12 +9353,12 @@ var _user$project$Main$actionableCard = function (forProcess) {
 										{
 											ctor: '::',
 											_0: _elm_lang$html$Html$text(
-												_user$project$Main$actionToText(forProcess.action)),
+												_nikolakasev$hello_elm$Main$actionToText(forProcess.action)),
 											_1: {ctor: '[]'}
 										}),
 									_1: {
 										ctor: '::',
-										_0: _user$project$Main$supportingInfo(forProcess.info),
+										_0: _nikolakasev$hello_elm$Main$supportingInfo(forProcess.info),
 										_1: {
 											ctor: '::',
 											_0: A2(
@@ -9372,13 +9370,13 @@ var _user$project$Main$actionableCard = function (forProcess) {
 									}
 								}
 							},
-							_user$project$Main$actionButtons(forProcess.id))),
+							_nikolakasev$hello_elm$Main$actionButtons(forProcess.id))),
 					_1: {ctor: '[]'}
 				}),
 			_1: {ctor: '[]'}
 		});
 };
-var _user$project$Main$view = function (model) {
+var _nikolakasev$hello_elm$Main$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
 		{
@@ -9388,31 +9386,28 @@ var _user$project$Main$view = function (model) {
 		},
 		A2(
 			_elm_lang$core$List$map,
-			_user$project$Main$actionableCard,
+			_nikolakasev$hello_elm$Main$actionableCard,
 			{
 				ctor: '::',
-				_0: _user$project$Main$someProcess,
+				_0: _nikolakasev$hello_elm$Main$someProcess,
 				_1: {ctor: '[]'}
 			}));
 };
-var _user$project$Main$main = _elm_lang$html$Html$beginnerProgram(
+var _nikolakasev$hello_elm$Main$main = _elm_lang$html$Html$beginnerProgram(
 	{
-		view: _user$project$Main$view,
+		view: _nikolakasev$hello_elm$Main$view,
 		model: {
 			ctor: '::',
-			_0: _user$project$Main$someProcess,
+			_0: _nikolakasev$hello_elm$Main$someProcess,
 			_1: {ctor: '[]'}
 		},
-		update: _user$project$Main$update
+		update: _nikolakasev$hello_elm$Main$update
 	})();
 
-var _user$project$Repl$t_s_o_l = {ctor: '_Tuple0'};
-var _user$project$Repl$d_e_l_t_r_o_n_3_0_3_0 = _user$project$Main$resulto;
-
 var Elm = {};
-Elm['Repl'] = Elm['Repl'] || {};
-if (typeof _user$project$Repl$main !== 'undefined') {
-    _user$project$Repl$main(Elm['Repl'], 'Repl', undefined);
+Elm['Main'] = Elm['Main'] || {};
+if (typeof _nikolakasev$hello_elm$Main$main !== 'undefined') {
+    _nikolakasev$hello_elm$Main$main(Elm['Main'], 'Main', undefined);
 }
 
 if (typeof define === "function" && define['amd'])
