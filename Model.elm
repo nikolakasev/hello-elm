@@ -40,6 +40,42 @@ ingredientDecoder =
         |> required "value" string
 
 
+type alias Event =
+    { name : String, ingredients : List String }
+
+
+eventDecoder : Decoder Event
+eventDecoder =
+    decode Event
+        |> required "name" string
+        |> required "ingredients" (list string)
+
+
+type alias Recipe =
+    { name : String, events : List Event }
+
+
+recipeDecoder : Decoder Recipe
+recipeDecoder =
+    decode Recipe
+        |> required "name" string
+        |> required "events" (list eventDecoder)
+
+
+type alias Recipes =
+    { value : List Recipe }
+
+
+recipesDecoder : Decoder Recipes
+recipesDecoder =
+    decode Recipes
+        |> required "value" (list recipeDecoder)
+
+
+
+-- what follows is test decoder functions and JSON data to use
+
+
 processes : String
 processes =
     """{
@@ -70,7 +106,7 @@ recipes =
     """{
       "value": [
         {
-          "recipe": "Carbonara cake",
+          "name": "Carbonara cake",
           "events": [
             {
               "name": "SpaghettiCookedAndDrained",
@@ -95,6 +131,11 @@ recipes =
     }"""
 
 
-resulto : Result String Processes
-resulto =
+testProcesses : Result String Processes
+testProcesses =
     decodeString processesDecoder processes
+
+
+testRecipes : Result String Recipes
+testRecipes =
+    decodeString recipesDecoder recipes

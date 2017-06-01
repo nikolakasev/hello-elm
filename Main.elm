@@ -4,7 +4,7 @@ import Html exposing (Html, button, div, text, h5, blockquote, p, br, a, i, span
 import Html.Attributes exposing (class, style)
 import Html.Events exposing (onClick)
 import Dict exposing (Dict)
-import Model exposing (Ingredient, Processes, ProcessWithEvents, resulto)
+import Model exposing (Ingredient, Processes, ProcessWithEvents, testProcesses)
 
 
 main : Program Never (List ActionableProcess) Msg
@@ -123,7 +123,7 @@ type alias ActionableRecipe =
 
 filterProcess : String -> String -> List ProcessWithEvents
 filterProcess forRecipe withEvent =
-    case resulto of
+    case testProcesses of
         Ok processes ->
             List.filter (\p -> List.member withEvent p.events && p.recipe == forRecipe) processes.value
 

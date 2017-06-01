@@ -9060,7 +9060,7 @@ var _elm_lang$html$Html_Events$Options = F2(
 		return {stopPropagation: a, preventDefault: b};
 	});
 
-var _nikolakasev$hello_elm$Model$recipes = '{\n      \"value\": [\n        {\n          \"recipe\": \"Carbonara cake\",\n          \"events\": [\n            {\n              \"name\": \"SpaghettiCookedAndDrained\",\n              \"ingredients\": [\"Spaghetti\", \"ResidualWaterInMil\"]\n            },\n            {\n              \"name\": \"ChefInfo\",\n              \"ingredients\": [\"ChefEmail\", \"ChefPhoneNumber\", \"ChefBirthDate\"]\n            },\n            {\n              \"name\": \"OvenFailure\",\n              \"ingredients\": [\"Reason\"]\n            },\n            {\n              \"name\": \"Maybe\",\n              \"description\": \"Give your advice\",\n              \"ingredients\": [\"AnswerWithYesOrNo\"]\n            }\n          ]\n        }\n      ]\n    }';
+var _nikolakasev$hello_elm$Model$recipes = '{\n      \"value\": [\n        {\n          \"name\": \"Carbonara cake\",\n          \"events\": [\n            {\n              \"name\": \"SpaghettiCookedAndDrained\",\n              \"ingredients\": [\"Spaghetti\", \"ResidualWaterInMil\"]\n            },\n            {\n              \"name\": \"ChefInfo\",\n              \"ingredients\": [\"ChefEmail\", \"ChefPhoneNumber\", \"ChefBirthDate\"]\n            },\n            {\n              \"name\": \"OvenFailure\",\n              \"ingredients\": [\"Reason\"]\n            },\n            {\n              \"name\": \"Maybe\",\n              \"description\": \"Give your advice\",\n              \"ingredients\": [\"AnswerWithYesOrNo\"]\n            }\n          ]\n        }\n      ]\n    }';
 var _nikolakasev$hello_elm$Model$processes = '{\n    \"value\" : [\n        {\n          \"id\": \"436fdbcf-2505-4483-adc7-88b8e3b7c370\",\n          \"recipe\": \"Carbonara cake\",\n          \"started\": \"2017-05-24T15:55:11Z\",\n          \"events\": [\"OvenPreheated\", \"ChefInfo\"]\n        },\n        {\n          \"id\": \"e0e86e03-eb25-4ff7-ab48-a7653655e666\",\n          \"recipe\": \"Carbonara cake\",\n          \"started\": \"2017-04-20T15:53:06Z\",\n          \"events\": [\"OvenPreheated\", \"OvenFailure\"]\n        },\n        {\n          \"id\": \"e1e86e03-eb25-4ff7-ab48-a7653655e666\",\n          \"recipe\": \"Carbonara cake\",\n          \"started\": \"2017-04-21T15:53:06Z\",\n          \"events\": [\"OvenPreheated\", \"OvenFailure\"]\n        }]\n    }';
 var _nikolakasev$hello_elm$Model$ProcessWithEvents = F4(
 	function (a, b, c, d) {
@@ -9091,7 +9091,7 @@ var _nikolakasev$hello_elm$Model$processesDecoder = A3(
 	'value',
 	_elm_lang$core$Json_Decode$list(_nikolakasev$hello_elm$Model$processDecoder),
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_nikolakasev$hello_elm$Model$Processes));
-var _nikolakasev$hello_elm$Model$resulto = A2(_elm_lang$core$Json_Decode$decodeString, _nikolakasev$hello_elm$Model$processesDecoder, _nikolakasev$hello_elm$Model$processes);
+var _nikolakasev$hello_elm$Model$testProcesses = A2(_elm_lang$core$Json_Decode$decodeString, _nikolakasev$hello_elm$Model$processesDecoder, _nikolakasev$hello_elm$Model$processes);
 var _nikolakasev$hello_elm$Model$Ingredient = F2(
 	function (a, b) {
 		return {name: a, value: b};
@@ -9105,10 +9105,45 @@ var _nikolakasev$hello_elm$Model$ingredientDecoder = A3(
 		'name',
 		_elm_lang$core$Json_Decode$string,
 		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_nikolakasev$hello_elm$Model$Ingredient)));
+var _nikolakasev$hello_elm$Model$Event = F2(
+	function (a, b) {
+		return {name: a, ingredients: b};
+	});
+var _nikolakasev$hello_elm$Model$eventDecoder = A3(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+	'ingredients',
+	_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string),
+	A3(
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+		'name',
+		_elm_lang$core$Json_Decode$string,
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_nikolakasev$hello_elm$Model$Event)));
+var _nikolakasev$hello_elm$Model$Recipe = F2(
+	function (a, b) {
+		return {name: a, events: b};
+	});
+var _nikolakasev$hello_elm$Model$recipeDecoder = A3(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+	'events',
+	_elm_lang$core$Json_Decode$list(_nikolakasev$hello_elm$Model$eventDecoder),
+	A3(
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+		'name',
+		_elm_lang$core$Json_Decode$string,
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_nikolakasev$hello_elm$Model$Recipe)));
+var _nikolakasev$hello_elm$Model$Recipes = function (a) {
+	return {value: a};
+};
+var _nikolakasev$hello_elm$Model$recipesDecoder = A3(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+	'value',
+	_elm_lang$core$Json_Decode$list(_nikolakasev$hello_elm$Model$recipeDecoder),
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_nikolakasev$hello_elm$Model$Recipes));
+var _nikolakasev$hello_elm$Model$testRecipes = A2(_elm_lang$core$Json_Decode$decodeString, _nikolakasev$hello_elm$Model$recipesDecoder, _nikolakasev$hello_elm$Model$recipes);
 
 var _nikolakasev$hello_elm$Main$filterProcess = F2(
 	function (forRecipe, withEvent) {
-		var _p0 = _nikolakasev$hello_elm$Model$resulto;
+		var _p0 = _nikolakasev$hello_elm$Model$testProcesses;
 		if (_p0.ctor === 'Ok') {
 			return A2(
 				_elm_lang$core$List$filter,
@@ -9414,6 +9449,10 @@ var Elm = {};
 Elm['Main'] = Elm['Main'] || {};
 if (typeof _nikolakasev$hello_elm$Main$main !== 'undefined') {
     _nikolakasev$hello_elm$Main$main(Elm['Main'], 'Main', undefined);
+}
+Elm['Model'] = Elm['Model'] || {};
+if (typeof _nikolakasev$hello_elm$Model$main !== 'undefined') {
+    _nikolakasev$hello_elm$Model$main(Elm['Model'], 'Model', undefined);
 }
 
 if (typeof define === "function" && define['amd'])
