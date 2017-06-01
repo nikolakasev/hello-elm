@@ -71,7 +71,7 @@ baseUri: http://localhost
               }
 /process/{id}:
   get:
-    description: Get a list of ingredients for a given process
+    description: Get a list of ingredients for a process
     responses:
       200:
         body:
@@ -86,3 +86,7 @@ baseUri: http://localhost
                   {"name": "OrderId", "value": "ABC-341234"}
                 ]
               }
+  post:
+    description: Notify a process that an event happened
+    responses:
+      204:
