@@ -3,11 +3,8 @@ module Main exposing (..)
 import Html exposing (Html, button, div, text, h5, blockquote, p, br, a, i, span)
 import Html.Attributes exposing (class, style)
 import Html.Events exposing (onClick)
-import Json.Decode exposing (int, string, at, list, map, Decoder, decodeString)
-import Json.Decode.Pipeline exposing (decode, required, optional, custom)
-import Json.Decode.Extra exposing (date)
-import Date exposing (Date)
 import Dict exposing (Dict)
+import Model exposing (Ingredient, Processes, ProcessWithEvents, resulto)
 
 
 main : Program Never (List ActionableProcess) Msg
@@ -19,14 +16,14 @@ type alias Id =
     String
 
 
-type alias Ingredient =
-    { name : String, value : String }
-
-
 type Action
     = Doubt -- when a maybe occurs
     | FourEyePrinciple -- when two persons need to give approval
     | SecondOpinion -- when the first person gave the approval or rejected
+
+
+
+-- + event + ingredient
 
 
 type alias ActionableProcess =
@@ -120,62 +117,8 @@ actionButtons processId =
     ]
 
 
-processes : String
-processes =
-    """{
-    "value" : [
-        {
-          "id": "436fdbcf-2505-4483-adc7-88b8e3b7c370",
-          "recipe": "Carbonara cake",
-          "started": "2017-05-24T15:55:11Z",
-          "events": ["OvenPreheated", "ChefInfo"]
-        },
-        {
-          "id": "e0e86e03-eb25-4ff7-ab48-a7653655e666",
-          "recipe": "Carbonara cake",
-          "started": "2017-04-20T15:53:06Z",
-          "events": ["OvenPreheated", "OvenFailure"]
-        }]
-    }"""
-
-
-type alias ProcessWithEvents =
-    { id : String, recipe : String, started : Date, events : List String }
-
-
-processDecoder : Decoder ProcessWithEvents
-processDecoder =
-    decode ProcessWithEvents
-        |> required "id" string
-        |> required "recipe" string
-        |> required "started" date
-        |> required "events" (list string)
-
-
-type alias Processes =
-    { value : List ProcessWithEvents }
-
-
-processesDecoder : Decoder Processes
-processesDecoder =
-    decode Processes
-        |> required "value" (list processDecoder)
-
-
-ingredientDecoder : Decoder Ingredient
-ingredientDecoder =
-    decode Ingredient
-        |> required "name" string
-        |> required "value" string
-
-
-resulto : Result String Processes
-resulto =
-    decodeString processesDecoder processes
-
-
 type alias ActionableRecipe =
-    { eventOfInterest : String, action : Action, compensatingEvent : String }
+    { eventOfInterest : String, action : Action, compensatingEvent : String, ingredient : String }
 
 
 filterProcess : String -> String -> List ProcessWithEvents
@@ -190,9 +133,9 @@ filterProcess forRecipe withEvent =
 
 config : Dict String ActionableRecipe
 config =
-    Dict.fromList [ ( "Carbonara cake", { eventOfInterest = "OvenFailure", action = Doubt, compensatingEvent = "Maybe" } ) ]
+    Dict.fromList [ ( "Carbonara cake", { eventOfInterest = "OvenFailure", action = Doubt, compensatingEvent = "Maybe", ingredient = "AnswerWithYesOrNo" } ) ]
 
 
-determineActions : Dict String ActionableRecipe -> Dict String (List ProcessWithEvents)
+determineActions : Dict String ActionableRecipe -> Dict String ( List ProcessWithEvents, ActionableRecipe )
 determineActions config =
-    Dict.map (\recipeName actionableRecipe -> filterProcess recipeName actionableRecipe.eventOfInterest) config
+    Dict.map (\recipeName actionableRecipe -> ( filterProcess recipeName actionableRecipe.eventOfInterest, actionableRecipe )) config

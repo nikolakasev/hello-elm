@@ -9060,7 +9060,79 @@ var _elm_lang$html$Html_Events$Options = F2(
 		return {stopPropagation: a, preventDefault: b};
 	});
 
-var _nikolakasev$hello_elm$Main$processes = '{\n    \"value\" : [\n        {\n          \"id\": \"436fdbcf-2505-4483-adc7-88b8e3b7c370\",\n          \"recipe\": \"Carbonara cake\",\n          \"started\": \"2017-05-24T15:55:11Z\",\n          \"events\": [\"OvenPreheated\", \"ChefInfo\"]\n        },\n        {\n          \"id\": \"e0e86e03-eb25-4ff7-ab48-a7653655e666\",\n          \"recipe\": \"Carbonara cake\",\n          \"started\": \"2017-04-20T15:53:06Z\",\n          \"events\": [\"OvenPreheated\", \"OvenFailure\"]\n        }]\n    }';
+var _nikolakasev$hello_elm$Model$recipes = '{\n      \"value\": [\n        {\n          \"recipe\": \"Carbonara cake\",\n          \"events\": [\n            {\n              \"name\": \"SpaghettiCookedAndDrained\",\n              \"ingredients\": [\"Spaghetti\", \"ResidualWaterInMil\"]\n            },\n            {\n              \"name\": \"ChefInfo\",\n              \"ingredients\": [\"ChefEmail\", \"ChefPhoneNumber\", \"ChefBirthDate\"]\n            },\n            {\n              \"name\": \"OvenFailure\",\n              \"ingredients\": [\"Reason\"]\n            },\n            {\n              \"name\": \"Maybe\",\n              \"description\": \"Give your advice\",\n              \"ingredients\": [\"AnswerWithYesOrNo\"]\n            }\n          ]\n        }\n      ]\n    }';
+var _nikolakasev$hello_elm$Model$processes = '{\n    \"value\" : [\n        {\n          \"id\": \"436fdbcf-2505-4483-adc7-88b8e3b7c370\",\n          \"recipe\": \"Carbonara cake\",\n          \"started\": \"2017-05-24T15:55:11Z\",\n          \"events\": [\"OvenPreheated\", \"ChefInfo\"]\n        },\n        {\n          \"id\": \"e0e86e03-eb25-4ff7-ab48-a7653655e666\",\n          \"recipe\": \"Carbonara cake\",\n          \"started\": \"2017-04-20T15:53:06Z\",\n          \"events\": [\"OvenPreheated\", \"OvenFailure\"]\n        },\n        {\n          \"id\": \"e1e86e03-eb25-4ff7-ab48-a7653655e666\",\n          \"recipe\": \"Carbonara cake\",\n          \"started\": \"2017-04-21T15:53:06Z\",\n          \"events\": [\"OvenPreheated\", \"OvenFailure\"]\n        }]\n    }';
+var _nikolakasev$hello_elm$Model$ProcessWithEvents = F4(
+	function (a, b, c, d) {
+		return {id: a, recipe: b, started: c, events: d};
+	});
+var _nikolakasev$hello_elm$Model$processDecoder = A3(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+	'events',
+	_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string),
+	A3(
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+		'started',
+		_elm_community$json_extra$Json_Decode_Extra$date,
+		A3(
+			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+			'recipe',
+			_elm_lang$core$Json_Decode$string,
+			A3(
+				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+				'id',
+				_elm_lang$core$Json_Decode$string,
+				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_nikolakasev$hello_elm$Model$ProcessWithEvents)))));
+var _nikolakasev$hello_elm$Model$Processes = function (a) {
+	return {value: a};
+};
+var _nikolakasev$hello_elm$Model$processesDecoder = A3(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+	'value',
+	_elm_lang$core$Json_Decode$list(_nikolakasev$hello_elm$Model$processDecoder),
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_nikolakasev$hello_elm$Model$Processes));
+var _nikolakasev$hello_elm$Model$resulto = A2(_elm_lang$core$Json_Decode$decodeString, _nikolakasev$hello_elm$Model$processesDecoder, _nikolakasev$hello_elm$Model$processes);
+var _nikolakasev$hello_elm$Model$Ingredient = F2(
+	function (a, b) {
+		return {name: a, value: b};
+	});
+var _nikolakasev$hello_elm$Model$ingredientDecoder = A3(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+	'value',
+	_elm_lang$core$Json_Decode$string,
+	A3(
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+		'name',
+		_elm_lang$core$Json_Decode$string,
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_nikolakasev$hello_elm$Model$Ingredient)));
+
+var _nikolakasev$hello_elm$Main$filterProcess = F2(
+	function (forRecipe, withEvent) {
+		var _p0 = _nikolakasev$hello_elm$Model$resulto;
+		if (_p0.ctor === 'Ok') {
+			return A2(
+				_elm_lang$core$List$filter,
+				function (p) {
+					return A2(_elm_lang$core$List$member, withEvent, p.events) && _elm_lang$core$Native_Utils.eq(p.recipe, forRecipe);
+				},
+				_p0._0.value);
+		} else {
+			return {ctor: '[]'};
+		}
+	});
+var _nikolakasev$hello_elm$Main$determineActions = function (config) {
+	return A2(
+		_elm_lang$core$Dict$map,
+		F2(
+			function (recipeName, actionableRecipe) {
+				return {
+					ctor: '_Tuple2',
+					_0: A2(_nikolakasev$hello_elm$Main$filterProcess, recipeName, actionableRecipe.eventOfInterest),
+					_1: actionableRecipe
+				};
+			}),
+		config);
+};
 var _nikolakasev$hello_elm$Main$supportingInfo = function (ingredients) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -9092,8 +9164,8 @@ var _nikolakasev$hello_elm$Main$supportingInfo = function (ingredients) {
 			ingredients));
 };
 var _nikolakasev$hello_elm$Main$actionToText = function (action) {
-	var _p0 = action;
-	switch (_p0.ctor) {
+	var _p1 = action;
+	switch (_p1.ctor) {
 		case 'Doubt':
 			return 'Maybe happened.';
 		case 'FourEyePrinciple':
@@ -9104,87 +9176,21 @@ var _nikolakasev$hello_elm$Main$actionToText = function (action) {
 };
 var _nikolakasev$hello_elm$Main$update = F2(
 	function (msg, model) {
-		var _p1 = msg;
-		if (_p1.ctor === 'Approved') {
+		var _p2 = msg;
+		if (_p2.ctor === 'Approved') {
 			return model;
 		} else {
 			return model;
 		}
 	});
 var _nikolakasev$hello_elm$Main$model = {ctor: '[]'};
-var _nikolakasev$hello_elm$Main$Ingredient = F2(
-	function (a, b) {
-		return {name: a, value: b};
-	});
-var _nikolakasev$hello_elm$Main$ingredientDecoder = A3(
-	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-	'value',
-	_elm_lang$core$Json_Decode$string,
-	A3(
-		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-		'name',
-		_elm_lang$core$Json_Decode$string,
-		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_nikolakasev$hello_elm$Main$Ingredient)));
 var _nikolakasev$hello_elm$Main$ActionableProcess = F4(
 	function (a, b, c, d) {
 		return {id: a, name: b, action: c, info: d};
 	});
-var _nikolakasev$hello_elm$Main$ProcessWithEvents = F4(
+var _nikolakasev$hello_elm$Main$ActionableRecipe = F4(
 	function (a, b, c, d) {
-		return {id: a, recipe: b, started: c, events: d};
-	});
-var _nikolakasev$hello_elm$Main$processDecoder = A3(
-	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-	'events',
-	_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string),
-	A3(
-		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-		'started',
-		_elm_community$json_extra$Json_Decode_Extra$date,
-		A3(
-			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-			'recipe',
-			_elm_lang$core$Json_Decode$string,
-			A3(
-				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-				'id',
-				_elm_lang$core$Json_Decode$string,
-				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_nikolakasev$hello_elm$Main$ProcessWithEvents)))));
-var _nikolakasev$hello_elm$Main$Processes = function (a) {
-	return {value: a};
-};
-var _nikolakasev$hello_elm$Main$processesDecoder = A3(
-	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-	'value',
-	_elm_lang$core$Json_Decode$list(_nikolakasev$hello_elm$Main$processDecoder),
-	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_nikolakasev$hello_elm$Main$Processes));
-var _nikolakasev$hello_elm$Main$resulto = A2(_elm_lang$core$Json_Decode$decodeString, _nikolakasev$hello_elm$Main$processesDecoder, _nikolakasev$hello_elm$Main$processes);
-var _nikolakasev$hello_elm$Main$filterProcess = F2(
-	function (forRecipe, withEvent) {
-		var _p2 = _nikolakasev$hello_elm$Main$resulto;
-		if (_p2.ctor === 'Ok') {
-			return A2(
-				_elm_lang$core$List$filter,
-				function (p) {
-					return A2(_elm_lang$core$List$member, withEvent, p.events) && _elm_lang$core$Native_Utils.eq(p.recipe, forRecipe);
-				},
-				_p2._0.value);
-		} else {
-			return {ctor: '[]'};
-		}
-	});
-var _nikolakasev$hello_elm$Main$determineActions = function (config) {
-	return A2(
-		_elm_lang$core$Dict$map,
-		F2(
-			function (recipeName, actionableRecipe) {
-				return A2(_nikolakasev$hello_elm$Main$filterProcess, recipeName, actionableRecipe.eventOfInterest);
-			}),
-		config);
-};
-var _nikolakasev$hello_elm$Main$ActionableRecipe = F3(
-	function (a, b, c) {
-		return {eventOfInterest: a, action: b, compensatingEvent: c};
+		return {eventOfInterest: a, action: b, compensatingEvent: c, ingredient: d};
 	});
 var _nikolakasev$hello_elm$Main$SecondOpinion = {ctor: 'SecondOpinion'};
 var _nikolakasev$hello_elm$Main$FourEyePrinciple = {ctor: 'FourEyePrinciple'};
@@ -9209,7 +9215,7 @@ var _nikolakasev$hello_elm$Main$config = _elm_lang$core$Dict$fromList(
 		_0: {
 			ctor: '_Tuple2',
 			_0: 'Carbonara cake',
-			_1: {eventOfInterest: 'OvenFailure', action: _nikolakasev$hello_elm$Main$Doubt, compensatingEvent: 'Maybe'}
+			_1: {eventOfInterest: 'OvenFailure', action: _nikolakasev$hello_elm$Main$Doubt, compensatingEvent: 'Maybe', ingredient: 'AnswerWithYesOrNo'}
 		},
 		_1: {ctor: '[]'}
 	});
