@@ -121,14 +121,9 @@ type alias ActionableRecipe =
     { eventOfInterest : String, action : Action, compensatingEvent : String, ingredient : String }
 
 
-filterProcess : String -> String -> List Process
-filterProcess forRecipe withEvent =
-    case testProcesses of
-        Ok processes ->
-            List.filter (\p -> List.member withEvent p.events && p.recipe == forRecipe) processes.value
-
-        _ ->
-            []
+filterProcess : Processes -> String -> String -> List Process
+filterProcess list forRecipe withEvent =
+    List.filter (\p -> List.member withEvent p.events && p.recipe == forRecipe) list.value
 
 
 config : Dict String ActionableRecipe
@@ -136,6 +131,12 @@ config =
     Dict.fromList [ ( "Carbonara cake", { eventOfInterest = "OvenFailure", action = Doubt, compensatingEvent = "Maybe", ingredient = "AnswerWithYesOrNo" } ) ]
 
 
-determineActions : Dict String ActionableRecipe -> Dict String ( List Process, ActionableRecipe )
-determineActions config =
-    Dict.map (\recipeName actionableRecipe -> ( filterProcess recipeName actionableRecipe.eventOfInterest, actionableRecipe )) config
+determineActions : Dict String ActionableRecipe -> Processes -> Dict String ( List Process, ActionableRecipe )
+determineActions config processes =
+    Dict.map (\recipeName actionableRecipe -> ( filterProcess processes recipeName actionableRecipe.eventOfInterest, actionableRecipe )) config
+
+
+test : Result String (Dict String ( List Process, ActionableRecipe ))
+test =
+    -- pass each process from testProcesses as the first parameter to determineActions
+    Result.map (determineActions config) testProcesses

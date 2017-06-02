@@ -9060,7 +9060,7 @@ var _elm_lang$html$Html_Events$Options = F2(
 		return {stopPropagation: a, preventDefault: b};
 	});
 
-var _nikolakasev$hello_elm$Model$processesWithIngredients = '\n  {\n    \"id\": \"e0e86e03-eb25-4ff7-ab48-a7653655e666\",\n    \"ingredients\": [\n      {\"name\": \"OvenTemperature\", \"value\": \"285\"},\n      {\"name\": \"SpaghettiWeight\", \"value\": \"150\"},\n      {\"name\": \"ChefName\", \"value\": \"John Doe\"},\n      {\"name\": \"OrderId\", \"value\": \"ABC-341234\"}\n    ]\n  }\n  ';
+var _nikolakasev$hello_elm$Model$processWithIngredients = '\n  {\n    \"id\": \"e0e86e03-eb25-4ff7-ab48-a7653655e666\",\n    \"ingredients\": [\n      {\"name\": \"OvenTemperature\", \"value\": \"285\"},\n      {\"name\": \"SpaghettiWeight\", \"value\": \"150\"},\n      {\"name\": \"ChefName\", \"value\": \"John Doe\"},\n      {\"name\": \"OrderId\", \"value\": \"ABC-341234\"}\n    ]\n  }\n  ';
 var _nikolakasev$hello_elm$Model$recipes = '{\n      \"value\": [\n        {\n          \"name\": \"Carbonara cake\",\n          \"events\": [\n            {\n              \"name\": \"SpaghettiCookedAndDrained\",\n              \"ingredients\": [\"Spaghetti\", \"ResidualWaterInMil\"]\n            },\n            {\n              \"name\": \"ChefInfo\",\n              \"ingredients\": [\"ChefEmail\", \"ChefPhoneNumber\", \"ChefBirthDate\"]\n            },\n            {\n              \"name\": \"OvenFailure\",\n              \"ingredients\": [\"Reason\"]\n            },\n            {\n              \"name\": \"Maybe\",\n              \"description\": \"Give your advice\",\n              \"ingredients\": [\"AnswerWithYesOrNo\"]\n            }\n          ]\n        }\n      ]\n    }';
 var _nikolakasev$hello_elm$Model$processes = '{\n    \"value\" : [\n        {\n          \"id\": \"436fdbcf-2505-4483-adc7-88b8e3b7c370\",\n          \"recipe\": \"Carbonara cake\",\n          \"started\": \"2017-05-24T15:55:11Z\",\n          \"events\": [\"OvenPreheated\", \"ChefInfo\"]\n        },\n        {\n          \"id\": \"e0e86e03-eb25-4ff7-ab48-a7653655e666\",\n          \"recipe\": \"Carbonara cake\",\n          \"started\": \"2017-04-20T15:53:06Z\",\n          \"events\": [\"OvenPreheated\", \"OvenFailure\"]\n        },\n        {\n          \"id\": \"e1e86e03-eb25-4ff7-ab48-a7653655e666\",\n          \"recipe\": \"Carbonara cake\",\n          \"started\": \"2017-04-21T15:53:06Z\",\n          \"events\": [\"OvenPreheated\", \"OvenFailure\"]\n        }]\n    }';
 var _nikolakasev$hello_elm$Model$Process = F4(
@@ -9119,7 +9119,7 @@ var _nikolakasev$hello_elm$Model$processWithIngredientsDecoder = A3(
 		'id',
 		_elm_lang$core$Json_Decode$string,
 		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_nikolakasev$hello_elm$Model$ProcessWithIngredients)));
-var _nikolakasev$hello_elm$Model$testProcessesWithIngredients = A2(_elm_lang$core$Json_Decode$decodeString, _nikolakasev$hello_elm$Model$processWithIngredientsDecoder, _nikolakasev$hello_elm$Model$processesWithIngredients);
+var _nikolakasev$hello_elm$Model$testProcessWithIngredients = A2(_elm_lang$core$Json_Decode$decodeString, _nikolakasev$hello_elm$Model$processWithIngredientsDecoder, _nikolakasev$hello_elm$Model$processWithIngredients);
 var _nikolakasev$hello_elm$Model$Event = F2(
 	function (a, b) {
 		return {name: a, ingredients: b};
@@ -9156,33 +9156,29 @@ var _nikolakasev$hello_elm$Model$recipesDecoder = A3(
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_nikolakasev$hello_elm$Model$Recipes));
 var _nikolakasev$hello_elm$Model$testRecipes = A2(_elm_lang$core$Json_Decode$decodeString, _nikolakasev$hello_elm$Model$recipesDecoder, _nikolakasev$hello_elm$Model$recipes);
 
-var _nikolakasev$hello_elm$Main$filterProcess = F2(
-	function (forRecipe, withEvent) {
-		var _p0 = _nikolakasev$hello_elm$Model$testProcesses;
-		if (_p0.ctor === 'Ok') {
-			return A2(
-				_elm_lang$core$List$filter,
-				function (p) {
-					return A2(_elm_lang$core$List$member, withEvent, p.events) && _elm_lang$core$Native_Utils.eq(p.recipe, forRecipe);
-				},
-				_p0._0.value);
-		} else {
-			return {ctor: '[]'};
-		}
+var _nikolakasev$hello_elm$Main$filterProcess = F3(
+	function (list, forRecipe, withEvent) {
+		return A2(
+			_elm_lang$core$List$filter,
+			function (p) {
+				return A2(_elm_lang$core$List$member, withEvent, p.events) && _elm_lang$core$Native_Utils.eq(p.recipe, forRecipe);
+			},
+			list.value);
 	});
-var _nikolakasev$hello_elm$Main$determineActions = function (config) {
-	return A2(
-		_elm_lang$core$Dict$map,
-		F2(
-			function (recipeName, actionableRecipe) {
-				return {
-					ctor: '_Tuple2',
-					_0: A2(_nikolakasev$hello_elm$Main$filterProcess, recipeName, actionableRecipe.eventOfInterest),
-					_1: actionableRecipe
-				};
-			}),
-		config);
-};
+var _nikolakasev$hello_elm$Main$determineActions = F2(
+	function (config, processes) {
+		return A2(
+			_elm_lang$core$Dict$map,
+			F2(
+				function (recipeName, actionableRecipe) {
+					return {
+						ctor: '_Tuple2',
+						_0: A3(_nikolakasev$hello_elm$Main$filterProcess, processes, recipeName, actionableRecipe.eventOfInterest),
+						_1: actionableRecipe
+					};
+				}),
+			config);
+	});
 var _nikolakasev$hello_elm$Main$supportingInfo = function (ingredients) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -9214,8 +9210,8 @@ var _nikolakasev$hello_elm$Main$supportingInfo = function (ingredients) {
 			ingredients));
 };
 var _nikolakasev$hello_elm$Main$actionToText = function (action) {
-	var _p1 = action;
-	switch (_p1.ctor) {
+	var _p0 = action;
+	switch (_p0.ctor) {
 		case 'Doubt':
 			return 'Maybe happened.';
 		case 'FourEyePrinciple':
@@ -9226,8 +9222,8 @@ var _nikolakasev$hello_elm$Main$actionToText = function (action) {
 };
 var _nikolakasev$hello_elm$Main$update = F2(
 	function (msg, model) {
-		var _p2 = msg;
-		if (_p2.ctor === 'Approved') {
+		var _p1 = msg;
+		if (_p1.ctor === 'Approved') {
 			return model;
 		} else {
 			return model;
@@ -9269,6 +9265,10 @@ var _nikolakasev$hello_elm$Main$config = _elm_lang$core$Dict$fromList(
 		},
 		_1: {ctor: '[]'}
 	});
+var _nikolakasev$hello_elm$Main$test = A2(
+	_elm_lang$core$Result$map,
+	_nikolakasev$hello_elm$Main$determineActions(_nikolakasev$hello_elm$Main$config),
+	_nikolakasev$hello_elm$Model$testProcesses);
 var _nikolakasev$hello_elm$Main$Rejected = function (a) {
 	return {ctor: 'Rejected', _0: a};
 };

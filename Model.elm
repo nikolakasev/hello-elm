@@ -142,8 +142,8 @@ recipes =
     }"""
 
 
-processesWithIngredients : String
-processesWithIngredients =
+processWithIngredients : String
+processWithIngredients =
     """
   {
     "id": "e0e86e03-eb25-4ff7-ab48-a7653655e666",
@@ -162,9 +162,9 @@ testProcesses =
     decodeString processesDecoder processes
 
 
-testProcessesWithIngredients : Result String ProcessWithIngredients
-testProcessesWithIngredients =
-    decodeString processWithIngredientsDecoder processesWithIngredients
+testProcessWithIngredients : Result String ProcessWithIngredients
+testProcessWithIngredients =
+    decodeString processWithIngredientsDecoder processWithIngredients
 
 
 testRecipes : Result String Recipes
