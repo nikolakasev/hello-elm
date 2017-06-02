@@ -9060,9 +9060,10 @@ var _elm_lang$html$Html_Events$Options = F2(
 		return {stopPropagation: a, preventDefault: b};
 	});
 
+var _nikolakasev$hello_elm$Model$processesWithIngredients = '\n  {\n    \"id\": \"e0e86e03-eb25-4ff7-ab48-a7653655e666\",\n    \"ingredients\": [\n      {\"name\": \"OvenTemperature\", \"value\": \"285\"},\n      {\"name\": \"SpaghettiWeight\", \"value\": \"150\"},\n      {\"name\": \"ChefName\", \"value\": \"John Doe\"},\n      {\"name\": \"OrderId\", \"value\": \"ABC-341234\"}\n    ]\n  }\n  ';
 var _nikolakasev$hello_elm$Model$recipes = '{\n      \"value\": [\n        {\n          \"name\": \"Carbonara cake\",\n          \"events\": [\n            {\n              \"name\": \"SpaghettiCookedAndDrained\",\n              \"ingredients\": [\"Spaghetti\", \"ResidualWaterInMil\"]\n            },\n            {\n              \"name\": \"ChefInfo\",\n              \"ingredients\": [\"ChefEmail\", \"ChefPhoneNumber\", \"ChefBirthDate\"]\n            },\n            {\n              \"name\": \"OvenFailure\",\n              \"ingredients\": [\"Reason\"]\n            },\n            {\n              \"name\": \"Maybe\",\n              \"description\": \"Give your advice\",\n              \"ingredients\": [\"AnswerWithYesOrNo\"]\n            }\n          ]\n        }\n      ]\n    }';
 var _nikolakasev$hello_elm$Model$processes = '{\n    \"value\" : [\n        {\n          \"id\": \"436fdbcf-2505-4483-adc7-88b8e3b7c370\",\n          \"recipe\": \"Carbonara cake\",\n          \"started\": \"2017-05-24T15:55:11Z\",\n          \"events\": [\"OvenPreheated\", \"ChefInfo\"]\n        },\n        {\n          \"id\": \"e0e86e03-eb25-4ff7-ab48-a7653655e666\",\n          \"recipe\": \"Carbonara cake\",\n          \"started\": \"2017-04-20T15:53:06Z\",\n          \"events\": [\"OvenPreheated\", \"OvenFailure\"]\n        },\n        {\n          \"id\": \"e1e86e03-eb25-4ff7-ab48-a7653655e666\",\n          \"recipe\": \"Carbonara cake\",\n          \"started\": \"2017-04-21T15:53:06Z\",\n          \"events\": [\"OvenPreheated\", \"OvenFailure\"]\n        }]\n    }';
-var _nikolakasev$hello_elm$Model$ProcessWithEvents = F4(
+var _nikolakasev$hello_elm$Model$Process = F4(
 	function (a, b, c, d) {
 		return {id: a, recipe: b, started: c, events: d};
 	});
@@ -9082,7 +9083,11 @@ var _nikolakasev$hello_elm$Model$processDecoder = A3(
 				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
 				'id',
 				_elm_lang$core$Json_Decode$string,
-				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_nikolakasev$hello_elm$Model$ProcessWithEvents)))));
+				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_nikolakasev$hello_elm$Model$Process)))));
+var _nikolakasev$hello_elm$Model$ProcessWithIngredients = F2(
+	function (a, b) {
+		return {id: a, ingredients: b};
+	});
 var _nikolakasev$hello_elm$Model$Processes = function (a) {
 	return {value: a};
 };
@@ -9105,6 +9110,16 @@ var _nikolakasev$hello_elm$Model$ingredientDecoder = A3(
 		'name',
 		_elm_lang$core$Json_Decode$string,
 		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_nikolakasev$hello_elm$Model$Ingredient)));
+var _nikolakasev$hello_elm$Model$processWithIngredientsDecoder = A3(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+	'ingredients',
+	_elm_lang$core$Json_Decode$list(_nikolakasev$hello_elm$Model$ingredientDecoder),
+	A3(
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+		'id',
+		_elm_lang$core$Json_Decode$string,
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_nikolakasev$hello_elm$Model$ProcessWithIngredients)));
+var _nikolakasev$hello_elm$Model$testProcessesWithIngredients = A2(_elm_lang$core$Json_Decode$decodeString, _nikolakasev$hello_elm$Model$processWithIngredientsDecoder, _nikolakasev$hello_elm$Model$processesWithIngredients);
 var _nikolakasev$hello_elm$Model$Event = F2(
 	function (a, b) {
 		return {name: a, ingredients: b};
@@ -9449,10 +9464,6 @@ var Elm = {};
 Elm['Main'] = Elm['Main'] || {};
 if (typeof _nikolakasev$hello_elm$Main$main !== 'undefined') {
     _nikolakasev$hello_elm$Main$main(Elm['Main'], 'Main', undefined);
-}
-Elm['Model'] = Elm['Model'] || {};
-if (typeof _nikolakasev$hello_elm$Model$main !== 'undefined') {
-    _nikolakasev$hello_elm$Model$main(Elm['Model'], 'Model', undefined);
 }
 
 if (typeof define === "function" && define['amd'])

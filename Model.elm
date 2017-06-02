@@ -1,26 +1,37 @@
 module Model exposing (..)
 
-import Json.Decode exposing (int, string, at, list, map, Decoder, decodeString)
+import Json.Decode exposing (int, string, at, list, map, nullable, Decoder, decodeString)
 import Json.Decode.Pipeline exposing (decode, required, optional, custom)
 import Json.Decode.Extra exposing (date)
 import Date exposing (Date)
 
 
-type alias ProcessWithEvents =
+type alias Process =
     { id : String, recipe : String, started : Date, events : List String }
 
 
-processDecoder : Decoder ProcessWithEvents
+processDecoder : Decoder Process
 processDecoder =
-    decode ProcessWithEvents
+    decode Process
         |> required "id" string
         |> required "recipe" string
         |> required "started" date
         |> required "events" (list string)
 
 
+type alias ProcessWithIngredients =
+    { id : String, ingredients : List Ingredient }
+
+
+processWithIngredientsDecoder : Decoder ProcessWithIngredients
+processWithIngredientsDecoder =
+    decode ProcessWithIngredients
+        |> required "id" string
+        |> required "ingredients" (list ingredientDecoder)
+
+
 type alias Processes =
-    { value : List ProcessWithEvents }
+    { value : List Process }
 
 
 processesDecoder : Decoder Processes
@@ -131,9 +142,29 @@ recipes =
     }"""
 
 
+processesWithIngredients : String
+processesWithIngredients =
+    """
+  {
+    "id": "e0e86e03-eb25-4ff7-ab48-a7653655e666",
+    "ingredients": [
+      {"name": "OvenTemperature", "value": "285"},
+      {"name": "SpaghettiWeight", "value": "150"},
+      {"name": "ChefName", "value": "John Doe"},
+      {"name": "OrderId", "value": "ABC-341234"}
+    ]
+  }
+  """
+
+
 testProcesses : Result String Processes
 testProcesses =
     decodeString processesDecoder processes
+
+
+testProcessesWithIngredients : Result String ProcessWithIngredients
+testProcessesWithIngredients =
+    decodeString processWithIngredientsDecoder processesWithIngredients
 
 
 testRecipes : Result String Recipes

@@ -4,7 +4,7 @@ import Html exposing (Html, button, div, text, h5, blockquote, p, br, a, i, span
 import Html.Attributes exposing (class, style)
 import Html.Events exposing (onClick)
 import Dict exposing (Dict)
-import Model exposing (Ingredient, Processes, ProcessWithEvents, testProcesses)
+import Model exposing (Ingredient, Processes, Process, ProcessWithIngredients, testProcesses)
 
 
 main : Program Never (List ActionableProcess) Msg
@@ -121,7 +121,7 @@ type alias ActionableRecipe =
     { eventOfInterest : String, action : Action, compensatingEvent : String, ingredient : String }
 
 
-filterProcess : String -> String -> List ProcessWithEvents
+filterProcess : String -> String -> List Process
 filterProcess forRecipe withEvent =
     case testProcesses of
         Ok processes ->
@@ -136,6 +136,6 @@ config =
     Dict.fromList [ ( "Carbonara cake", { eventOfInterest = "OvenFailure", action = Doubt, compensatingEvent = "Maybe", ingredient = "AnswerWithYesOrNo" } ) ]
 
 
-determineActions : Dict String ActionableRecipe -> Dict String ( List ProcessWithEvents, ActionableRecipe )
+determineActions : Dict String ActionableRecipe -> Dict String ( List Process, ActionableRecipe )
 determineActions config =
     Dict.map (\recipeName actionableRecipe -> ( filterProcess recipeName actionableRecipe.eventOfInterest, actionableRecipe )) config
