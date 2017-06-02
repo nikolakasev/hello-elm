@@ -9166,18 +9166,18 @@ var _nikolakasev$hello_elm$Main$filterProcess = F3(
 			list.value);
 	});
 var _nikolakasev$hello_elm$Main$determineActions = F2(
-	function (config, processes) {
+	function (forProcesses, withConfig) {
 		return A2(
 			_elm_lang$core$Dict$map,
 			F2(
 				function (recipeName, actionableRecipe) {
 					return {
 						ctor: '_Tuple2',
-						_0: A3(_nikolakasev$hello_elm$Main$filterProcess, processes, recipeName, actionableRecipe.eventOfInterest),
+						_0: A3(_nikolakasev$hello_elm$Main$filterProcess, forProcesses, recipeName, actionableRecipe.eventOfInterest),
 						_1: actionableRecipe
 					};
 				}),
-			config);
+			withConfig);
 	});
 var _nikolakasev$hello_elm$Main$supportingInfo = function (ingredients) {
 	return A2(
@@ -9267,7 +9267,7 @@ var _nikolakasev$hello_elm$Main$config = _elm_lang$core$Dict$fromList(
 	});
 var _nikolakasev$hello_elm$Main$test = A2(
 	_elm_lang$core$Result$map,
-	_nikolakasev$hello_elm$Main$determineActions(_nikolakasev$hello_elm$Main$config),
+	A2(_elm_lang$core$Basics$flip, _nikolakasev$hello_elm$Main$determineActions, _nikolakasev$hello_elm$Main$config),
 	_nikolakasev$hello_elm$Model$testProcesses);
 var _nikolakasev$hello_elm$Main$Rejected = function (a) {
 	return {ctor: 'Rejected', _0: a};
@@ -9460,10 +9460,13 @@ var _nikolakasev$hello_elm$Main$main = _elm_lang$html$Html$beginnerProgram(
 		update: _nikolakasev$hello_elm$Main$update
 	})();
 
+var _nikolakasev$hello_elm$Repl$t_s_o_l = {ctor: '_Tuple0'};
+var _nikolakasev$hello_elm$Repl$d_e_l_t_r_o_n_3_0_3_0 = _nikolakasev$hello_elm$Main$test;
+
 var Elm = {};
-Elm['Main'] = Elm['Main'] || {};
-if (typeof _nikolakasev$hello_elm$Main$main !== 'undefined') {
-    _nikolakasev$hello_elm$Main$main(Elm['Main'], 'Main', undefined);
+Elm['Repl'] = Elm['Repl'] || {};
+if (typeof _nikolakasev$hello_elm$Repl$main !== 'undefined') {
+    _nikolakasev$hello_elm$Repl$main(Elm['Repl'], 'Repl', undefined);
 }
 
 if (typeof define === "function" && define['amd'])

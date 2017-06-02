@@ -131,12 +131,12 @@ config =
     Dict.fromList [ ( "Carbonara cake", { eventOfInterest = "OvenFailure", action = Doubt, compensatingEvent = "Maybe", ingredient = "AnswerWithYesOrNo" } ) ]
 
 
-determineActions : Dict String ActionableRecipe -> Processes -> Dict String ( List Process, ActionableRecipe )
-determineActions config processes =
-    Dict.map (\recipeName actionableRecipe -> ( filterProcess processes recipeName actionableRecipe.eventOfInterest, actionableRecipe )) config
+determineActions : Processes -> Dict String ActionableRecipe -> Dict String ( List Process, ActionableRecipe )
+determineActions forProcesses withConfig =
+    Dict.map (\recipeName actionableRecipe -> ( filterProcess forProcesses recipeName actionableRecipe.eventOfInterest, actionableRecipe )) withConfig
 
 
 test : Result String (Dict String ( List Process, ActionableRecipe ))
 test =
     -- pass each process from testProcesses as the first parameter to determineActions
-    Result.map (determineActions config) testProcesses
+    Result.map (flip determineActions config) testProcesses
