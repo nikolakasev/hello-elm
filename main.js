@@ -9534,10 +9534,6 @@ Elm['Main'] = Elm['Main'] || {};
 if (typeof _nikolakasev$hello_elm$Main$main !== 'undefined') {
     _nikolakasev$hello_elm$Main$main(Elm['Main'], 'Main', undefined);
 }
-Elm['Model'] = Elm['Model'] || {};
-if (typeof _nikolakasev$hello_elm$Model$main !== 'undefined') {
-    _nikolakasev$hello_elm$Model$main(Elm['Model'], 'Model', undefined);
-}
 
 if (typeof define === "function" && define['amd'])
 {
