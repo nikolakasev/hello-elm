@@ -9179,6 +9179,97 @@ var _nikolakasev$hello_elm$Main$determineActions = F2(
 				}),
 			withConfig);
 	});
+var _nikolakasev$hello_elm$Main$icon = function (name) {
+	return A2(
+		_elm_lang$html$Html$i,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('small material-icons left'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html$text(name),
+			_1: {ctor: '[]'}
+		});
+};
+var _nikolakasev$hello_elm$Main$error = function (message) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _nikolakasev$hello_elm$Main$icon('error'),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$h4,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(message),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _nikolakasev$hello_elm$Main$noProcessesFound = A2(
+	_elm_lang$html$Html$div,
+	{ctor: '[]'},
+	{
+		ctor: '::',
+		_0: A2(
+			_elm_lang$html$Html$h4,
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text('No actionable proceses found.'),
+				_1: {ctor: '[]'}
+			}),
+		_1: {ctor: '[]'}
+	});
+var _nikolakasev$hello_elm$Main$loading = A2(
+	_elm_lang$html$Html$div,
+	{
+		ctor: '::',
+		_0: _elm_lang$html$Html_Attributes$class('preloader-wrapper small active'),
+		_1: {ctor: '[]'}
+	},
+	{
+		ctor: '::',
+		_0: A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('spinner-layer spinner-green-only'),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('circle-clipper left'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$div,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$class('circle'),
+								_1: {ctor: '[]'}
+							},
+							{ctor: '[]'}),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			}),
+		_1: {ctor: '[]'}
+	});
 var _nikolakasev$hello_elm$Main$supportingInfo = function (ingredients) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -9292,18 +9383,7 @@ var _nikolakasev$hello_elm$Main$actionButtons = function (processId) {
 			},
 			{
 				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$i,
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$class('small material-icons left'),
-						_1: {ctor: '[]'}
-					},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text('thumb_up'),
-						_1: {ctor: '[]'}
-					}),
+				_0: _nikolakasev$hello_elm$Main$icon('thumb_up'),
 				_1: {
 					ctor: '::',
 					_0: _elm_lang$html$Html$text('Approve'),
@@ -9336,18 +9416,7 @@ var _nikolakasev$hello_elm$Main$actionButtons = function (processId) {
 					},
 					{
 						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$i,
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$class('small material-icons left'),
-								_1: {ctor: '[]'}
-							},
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html$text('thumb_down'),
-								_1: {ctor: '[]'}
-							}),
+						_0: _nikolakasev$hello_elm$Main$icon('thumb_down'),
 						_1: {
 							ctor: '::',
 							_0: _elm_lang$html$Html$text('Reject'),
@@ -9460,13 +9529,14 @@ var _nikolakasev$hello_elm$Main$main = _elm_lang$html$Html$beginnerProgram(
 		update: _nikolakasev$hello_elm$Main$update
 	})();
 
-var _nikolakasev$hello_elm$Repl$t_s_o_l = {ctor: '_Tuple0'};
-var _nikolakasev$hello_elm$Repl$d_e_l_t_r_o_n_3_0_3_0 = _nikolakasev$hello_elm$Main$test;
-
 var Elm = {};
-Elm['Repl'] = Elm['Repl'] || {};
-if (typeof _nikolakasev$hello_elm$Repl$main !== 'undefined') {
-    _nikolakasev$hello_elm$Repl$main(Elm['Repl'], 'Repl', undefined);
+Elm['Main'] = Elm['Main'] || {};
+if (typeof _nikolakasev$hello_elm$Main$main !== 'undefined') {
+    _nikolakasev$hello_elm$Main$main(Elm['Main'], 'Main', undefined);
+}
+Elm['Model'] = Elm['Model'] || {};
+if (typeof _nikolakasev$hello_elm$Model$main !== 'undefined') {
+    _nikolakasev$hello_elm$Model$main(Elm['Model'], 'Model', undefined);
 }
 
 if (typeof define === "function" && define['amd'])

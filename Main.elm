@@ -1,6 +1,6 @@
 module Main exposing (..)
 
-import Html exposing (Html, button, div, text, h5, blockquote, p, br, a, i, span)
+import Html exposing (Html, button, div, text, h4, h5, blockquote, p, br, a, i, span)
 import Html.Attributes exposing (class, style)
 import Html.Events exposing (onClick)
 import Dict exposing (Dict)
@@ -103,7 +103,7 @@ actionButtons processId =
         [ class "waves-effect waves-light btn-floating"
         , onClick <| Approved processId
         ]
-        [ i [ class "small material-icons left" ] [ text "thumb_up" ]
+        [ icon "thumb_up"
         , text "Approve"
         ]
     , span [] [ text " " ] -- put some space between the buttons
@@ -111,10 +111,42 @@ actionButtons processId =
         [ class "waves-effect waves-light btn-floating red"
         , onClick <| Rejected processId
         ]
-        [ i [ class "small material-icons left" ] [ text "thumb_down" ]
+        [ icon "thumb_down"
         , text "Reject"
         ]
     ]
+
+
+loading : Html msg
+loading =
+    div [ class "preloader-wrapper small active" ]
+        [ div [ class "spinner-layer spinner-green-only" ]
+            [ div [ class "circle-clipper left" ] [ div [ class "circle" ] [] ]
+
+            --  , div [ class "gap-patch" ] [ div [ class "circle" ] [] ]
+            --  , div [ class "circle-clipper right" ] [ div [ class "circle" ] [] ]
+            ]
+        ]
+
+
+noProcessesFound : Html msg
+noProcessesFound =
+    div []
+        [ h4 [] [ text "No actionable proceses found." ]
+        ]
+
+
+error : String -> Html msg
+error message =
+    div []
+        [ icon "error"
+        , h4 [] [ text message ]
+        ]
+
+
+icon : String -> Html msg
+icon name =
+    i [ class "small material-icons left" ] [ text name ]
 
 
 type alias ActionableRecipe =
