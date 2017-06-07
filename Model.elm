@@ -6,8 +6,12 @@ import Json.Decode.Extra exposing (date)
 import Date exposing (Date)
 
 
+type alias Id =
+    String
+
+
 type alias Process =
-    { id : String, recipe : String, started : Date, events : List String }
+    { id : Id, recipe : String, started : Date, events : List String }
 
 
 processDecoder : Decoder Process
@@ -20,7 +24,7 @@ processDecoder =
 
 
 type alias ProcessWithIngredients =
-    { id : String, ingredients : List Ingredient }
+    { id : Id, ingredients : List Ingredient }
 
 
 processWithIngredientsDecoder : Decoder ProcessWithIngredients

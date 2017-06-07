@@ -1,9 +1,9 @@
-module Commands exposing (fetchProcesses)
+module Api exposing (fetchProcesses, fetchDetails)
 
 import Http
 import RemoteData
 import Messages exposing (Msg)
-import Model exposing (processesDecoder)
+import Model exposing (processesDecoder, processWithIngredientsDecoder)
 
 
 fetchProcesses : Cmd Msg
@@ -16,3 +16,15 @@ fetchProcesses =
 fetchProcessesUrl : String
 fetchProcessesUrl =
     "http://localhost:3000/processes"
+
+
+fetchDetails : String -> Cmd Msg
+fetchDetails process =
+    Http.get (fetchProcessesUrl ++ process) processWithIngredientsDecoder
+        |> RemoteData.sendRequest
+        |> Cmd.map Messages.OnFetchDetails
+
+
+fetchDetailsUrl : String
+fetchDetailsUrl =
+    "http://localhost:3000/process"

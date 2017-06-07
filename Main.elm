@@ -4,16 +4,15 @@ import Html exposing (Html, button, div, text, h4, h5, blockquote, p, br, a, i, 
 import Html.Attributes exposing (class, style)
 import Html.Events exposing (onClick)
 import Dict exposing (Dict)
-import Model exposing (Ingredient, Processes, Process, ProcessWithIngredients, testProcesses)
+import Model exposing (Id, Ingredient, Processes, Process, ProcessWithIngredients, testProcesses)
+import Messages exposing (..)
+import Api
+import RemoteData exposing (WebData)
 
 
-main : Program Never (List ActionableProcess) Msg
+main : Program Never Model Msg
 main =
-    Html.beginnerProgram { view = view, model = [ someProcess ], update = update }
-
-
-type alias Id =
-    String
+    Html.program { init = init, view = view, update = update, subscriptions = subscriptions }
 
 
 type Action
@@ -36,32 +35,42 @@ someProcess =
 
 
 type alias Model =
-    List ActionableProcess
+    { processes : WebData Processes, actionables : List ActionableProcess, details : Int }
+
+
+init : ( Model, Cmd Msg )
+init =
+    ( model, Api.fetchProcesses )
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.none
 
 
 model : Model
 model =
-    []
+    { processes = RemoteData.Loading, actionables = [ someProcess ], details = 0 }
 
 
-type Msg
-    = Approved Id
-    | Rejected Id
-
-
-update : Msg -> Model -> Model
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        Approved id ->
-            model
-
-        Rejected id ->
-            model
+        _ ->
+            ( model, Cmd.none )
 
 
 view : Model -> Html Msg
 view model =
-    div [ class "row" ] <| List.map actionableCard [ someProcess ]
+    case model.processes of
+        RemoteData.Loading ->
+            loading
+
+        RemoteData.Success p ->
+            error <| toString p
+
+        _ ->
+            div [ class "row" ] <| List.map actionableCard model.actionables
 
 
 actionableCard : ActionableProcess -> Html Msg

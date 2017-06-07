@@ -9060,6 +9060,583 @@ var _elm_lang$html$Html_Events$Options = F2(
 		return {stopPropagation: a, preventDefault: b};
 	});
 
+var _elm_lang$http$Native_Http = function() {
+
+
+// ENCODING AND DECODING
+
+function encodeUri(string)
+{
+	return encodeURIComponent(string);
+}
+
+function decodeUri(string)
+{
+	try
+	{
+		return _elm_lang$core$Maybe$Just(decodeURIComponent(string));
+	}
+	catch(e)
+	{
+		return _elm_lang$core$Maybe$Nothing;
+	}
+}
+
+
+// SEND REQUEST
+
+function toTask(request, maybeProgress)
+{
+	return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback)
+	{
+		var xhr = new XMLHttpRequest();
+
+		configureProgress(xhr, maybeProgress);
+
+		xhr.addEventListener('error', function() {
+			callback(_elm_lang$core$Native_Scheduler.fail({ ctor: 'NetworkError' }));
+		});
+		xhr.addEventListener('timeout', function() {
+			callback(_elm_lang$core$Native_Scheduler.fail({ ctor: 'Timeout' }));
+		});
+		xhr.addEventListener('load', function() {
+			callback(handleResponse(xhr, request.expect.responseToResult));
+		});
+
+		try
+		{
+			xhr.open(request.method, request.url, true);
+		}
+		catch (e)
+		{
+			return callback(_elm_lang$core$Native_Scheduler.fail({ ctor: 'BadUrl', _0: request.url }));
+		}
+
+		configureRequest(xhr, request);
+		send(xhr, request.body);
+
+		return function() { xhr.abort(); };
+	});
+}
+
+function configureProgress(xhr, maybeProgress)
+{
+	if (maybeProgress.ctor === 'Nothing')
+	{
+		return;
+	}
+
+	xhr.addEventListener('progress', function(event) {
+		if (!event.lengthComputable)
+		{
+			return;
+		}
+		_elm_lang$core$Native_Scheduler.rawSpawn(maybeProgress._0({
+			bytes: event.loaded,
+			bytesExpected: event.total
+		}));
+	});
+}
+
+function configureRequest(xhr, request)
+{
+	function setHeader(pair)
+	{
+		xhr.setRequestHeader(pair._0, pair._1);
+	}
+
+	A2(_elm_lang$core$List$map, setHeader, request.headers);
+	xhr.responseType = request.expect.responseType;
+	xhr.withCredentials = request.withCredentials;
+
+	if (request.timeout.ctor === 'Just')
+	{
+		xhr.timeout = request.timeout._0;
+	}
+}
+
+function send(xhr, body)
+{
+	switch (body.ctor)
+	{
+		case 'EmptyBody':
+			xhr.send();
+			return;
+
+		case 'StringBody':
+			xhr.setRequestHeader('Content-Type', body._0);
+			xhr.send(body._1);
+			return;
+
+		case 'FormDataBody':
+			xhr.send(body._0);
+			return;
+	}
+}
+
+
+// RESPONSES
+
+function handleResponse(xhr, responseToResult)
+{
+	var response = toResponse(xhr);
+
+	if (xhr.status < 200 || 300 <= xhr.status)
+	{
+		response.body = xhr.responseText;
+		return _elm_lang$core$Native_Scheduler.fail({
+			ctor: 'BadStatus',
+			_0: response
+		});
+	}
+
+	var result = responseToResult(response);
+
+	if (result.ctor === 'Ok')
+	{
+		return _elm_lang$core$Native_Scheduler.succeed(result._0);
+	}
+	else
+	{
+		response.body = xhr.responseText;
+		return _elm_lang$core$Native_Scheduler.fail({
+			ctor: 'BadPayload',
+			_0: result._0,
+			_1: response
+		});
+	}
+}
+
+function toResponse(xhr)
+{
+	return {
+		status: { code: xhr.status, message: xhr.statusText },
+		headers: parseHeaders(xhr.getAllResponseHeaders()),
+		url: xhr.responseURL,
+		body: xhr.response
+	};
+}
+
+function parseHeaders(rawHeaders)
+{
+	var headers = _elm_lang$core$Dict$empty;
+
+	if (!rawHeaders)
+	{
+		return headers;
+	}
+
+	var headerPairs = rawHeaders.split('\u000d\u000a');
+	for (var i = headerPairs.length; i--; )
+	{
+		var headerPair = headerPairs[i];
+		var index = headerPair.indexOf('\u003a\u0020');
+		if (index > 0)
+		{
+			var key = headerPair.substring(0, index);
+			var value = headerPair.substring(index + 2);
+
+			headers = A3(_elm_lang$core$Dict$update, key, function(oldValue) {
+				if (oldValue.ctor === 'Just')
+				{
+					return _elm_lang$core$Maybe$Just(value + ', ' + oldValue._0);
+				}
+				return _elm_lang$core$Maybe$Just(value);
+			}, headers);
+		}
+	}
+
+	return headers;
+}
+
+
+// EXPECTORS
+
+function expectStringResponse(responseToResult)
+{
+	return {
+		responseType: 'text',
+		responseToResult: responseToResult
+	};
+}
+
+function mapExpect(func, expect)
+{
+	return {
+		responseType: expect.responseType,
+		responseToResult: function(response) {
+			var convertedResponse = expect.responseToResult(response);
+			return A2(_elm_lang$core$Result$map, func, convertedResponse);
+		}
+	};
+}
+
+
+// BODY
+
+function multipart(parts)
+{
+	var formData = new FormData();
+
+	while (parts.ctor !== '[]')
+	{
+		var part = parts._0;
+		formData.append(part._0, part._1);
+		parts = parts._1;
+	}
+
+	return { ctor: 'FormDataBody', _0: formData };
+}
+
+return {
+	toTask: F2(toTask),
+	expectStringResponse: expectStringResponse,
+	mapExpect: F2(mapExpect),
+	multipart: multipart,
+	encodeUri: encodeUri,
+	decodeUri: decodeUri
+};
+
+}();
+
+var _elm_lang$http$Http_Internal$map = F2(
+	function (func, request) {
+		return _elm_lang$core$Native_Utils.update(
+			request,
+			{
+				expect: A2(_elm_lang$http$Native_Http.mapExpect, func, request.expect)
+			});
+	});
+var _elm_lang$http$Http_Internal$RawRequest = F7(
+	function (a, b, c, d, e, f, g) {
+		return {method: a, headers: b, url: c, body: d, expect: e, timeout: f, withCredentials: g};
+	});
+var _elm_lang$http$Http_Internal$Request = function (a) {
+	return {ctor: 'Request', _0: a};
+};
+var _elm_lang$http$Http_Internal$Expect = {ctor: 'Expect'};
+var _elm_lang$http$Http_Internal$FormDataBody = {ctor: 'FormDataBody'};
+var _elm_lang$http$Http_Internal$StringBody = F2(
+	function (a, b) {
+		return {ctor: 'StringBody', _0: a, _1: b};
+	});
+var _elm_lang$http$Http_Internal$EmptyBody = {ctor: 'EmptyBody'};
+var _elm_lang$http$Http_Internal$Header = F2(
+	function (a, b) {
+		return {ctor: 'Header', _0: a, _1: b};
+	});
+
+var _elm_lang$http$Http$decodeUri = _elm_lang$http$Native_Http.decodeUri;
+var _elm_lang$http$Http$encodeUri = _elm_lang$http$Native_Http.encodeUri;
+var _elm_lang$http$Http$expectStringResponse = _elm_lang$http$Native_Http.expectStringResponse;
+var _elm_lang$http$Http$expectJson = function (decoder) {
+	return _elm_lang$http$Http$expectStringResponse(
+		function (response) {
+			return A2(_elm_lang$core$Json_Decode$decodeString, decoder, response.body);
+		});
+};
+var _elm_lang$http$Http$expectString = _elm_lang$http$Http$expectStringResponse(
+	function (response) {
+		return _elm_lang$core$Result$Ok(response.body);
+	});
+var _elm_lang$http$Http$multipartBody = _elm_lang$http$Native_Http.multipart;
+var _elm_lang$http$Http$stringBody = _elm_lang$http$Http_Internal$StringBody;
+var _elm_lang$http$Http$jsonBody = function (value) {
+	return A2(
+		_elm_lang$http$Http_Internal$StringBody,
+		'application/json',
+		A2(_elm_lang$core$Json_Encode$encode, 0, value));
+};
+var _elm_lang$http$Http$emptyBody = _elm_lang$http$Http_Internal$EmptyBody;
+var _elm_lang$http$Http$header = _elm_lang$http$Http_Internal$Header;
+var _elm_lang$http$Http$request = _elm_lang$http$Http_Internal$Request;
+var _elm_lang$http$Http$post = F3(
+	function (url, body, decoder) {
+		return _elm_lang$http$Http$request(
+			{
+				method: 'POST',
+				headers: {ctor: '[]'},
+				url: url,
+				body: body,
+				expect: _elm_lang$http$Http$expectJson(decoder),
+				timeout: _elm_lang$core$Maybe$Nothing,
+				withCredentials: false
+			});
+	});
+var _elm_lang$http$Http$get = F2(
+	function (url, decoder) {
+		return _elm_lang$http$Http$request(
+			{
+				method: 'GET',
+				headers: {ctor: '[]'},
+				url: url,
+				body: _elm_lang$http$Http$emptyBody,
+				expect: _elm_lang$http$Http$expectJson(decoder),
+				timeout: _elm_lang$core$Maybe$Nothing,
+				withCredentials: false
+			});
+	});
+var _elm_lang$http$Http$getString = function (url) {
+	return _elm_lang$http$Http$request(
+		{
+			method: 'GET',
+			headers: {ctor: '[]'},
+			url: url,
+			body: _elm_lang$http$Http$emptyBody,
+			expect: _elm_lang$http$Http$expectString,
+			timeout: _elm_lang$core$Maybe$Nothing,
+			withCredentials: false
+		});
+};
+var _elm_lang$http$Http$toTask = function (_p0) {
+	var _p1 = _p0;
+	return A2(_elm_lang$http$Native_Http.toTask, _p1._0, _elm_lang$core$Maybe$Nothing);
+};
+var _elm_lang$http$Http$send = F2(
+	function (resultToMessage, request) {
+		return A2(
+			_elm_lang$core$Task$attempt,
+			resultToMessage,
+			_elm_lang$http$Http$toTask(request));
+	});
+var _elm_lang$http$Http$Response = F4(
+	function (a, b, c, d) {
+		return {url: a, status: b, headers: c, body: d};
+	});
+var _elm_lang$http$Http$BadPayload = F2(
+	function (a, b) {
+		return {ctor: 'BadPayload', _0: a, _1: b};
+	});
+var _elm_lang$http$Http$BadStatus = function (a) {
+	return {ctor: 'BadStatus', _0: a};
+};
+var _elm_lang$http$Http$NetworkError = {ctor: 'NetworkError'};
+var _elm_lang$http$Http$Timeout = {ctor: 'Timeout'};
+var _elm_lang$http$Http$BadUrl = function (a) {
+	return {ctor: 'BadUrl', _0: a};
+};
+var _elm_lang$http$Http$StringPart = F2(
+	function (a, b) {
+		return {ctor: 'StringPart', _0: a, _1: b};
+	});
+var _elm_lang$http$Http$stringPart = _elm_lang$http$Http$StringPart;
+
+var _krisajenkins$remotedata$RemoteData$isNotAsked = function (data) {
+	var _p0 = data;
+	if (_p0.ctor === 'NotAsked') {
+		return true;
+	} else {
+		return false;
+	}
+};
+var _krisajenkins$remotedata$RemoteData$isLoading = function (data) {
+	var _p1 = data;
+	if (_p1.ctor === 'Loading') {
+		return true;
+	} else {
+		return false;
+	}
+};
+var _krisajenkins$remotedata$RemoteData$isFailure = function (data) {
+	var _p2 = data;
+	if (_p2.ctor === 'Failure') {
+		return true;
+	} else {
+		return false;
+	}
+};
+var _krisajenkins$remotedata$RemoteData$isSuccess = function (data) {
+	var _p3 = data;
+	if (_p3.ctor === 'Success') {
+		return true;
+	} else {
+		return false;
+	}
+};
+var _krisajenkins$remotedata$RemoteData$withDefault = F2(
+	function ($default, data) {
+		var _p4 = data;
+		if (_p4.ctor === 'Success') {
+			return _p4._0;
+		} else {
+			return $default;
+		}
+	});
+var _krisajenkins$remotedata$RemoteData$Success = function (a) {
+	return {ctor: 'Success', _0: a};
+};
+var _krisajenkins$remotedata$RemoteData$succeed = _krisajenkins$remotedata$RemoteData$Success;
+var _krisajenkins$remotedata$RemoteData$prism = {
+	reverseGet: _krisajenkins$remotedata$RemoteData$Success,
+	getOption: function (data) {
+		var _p5 = data;
+		if (_p5.ctor === 'Success') {
+			return _elm_lang$core$Maybe$Just(_p5._0);
+		} else {
+			return _elm_lang$core$Maybe$Nothing;
+		}
+	}
+};
+var _krisajenkins$remotedata$RemoteData$Failure = function (a) {
+	return {ctor: 'Failure', _0: a};
+};
+var _krisajenkins$remotedata$RemoteData$fromResult = function (result) {
+	var _p6 = result;
+	if (_p6.ctor === 'Err') {
+		return _krisajenkins$remotedata$RemoteData$Failure(_p6._0);
+	} else {
+		return _krisajenkins$remotedata$RemoteData$Success(_p6._0);
+	}
+};
+var _krisajenkins$remotedata$RemoteData$asCmd = _elm_lang$core$Task$attempt(_krisajenkins$remotedata$RemoteData$fromResult);
+var _krisajenkins$remotedata$RemoteData$sendRequest = _elm_lang$http$Http$send(_krisajenkins$remotedata$RemoteData$fromResult);
+var _krisajenkins$remotedata$RemoteData$fromTask = function (_p7) {
+	return A2(
+		_elm_lang$core$Task$onError,
+		function (_p8) {
+			return _elm_lang$core$Task$succeed(
+				_krisajenkins$remotedata$RemoteData$Failure(_p8));
+		},
+		A2(_elm_lang$core$Task$map, _krisajenkins$remotedata$RemoteData$Success, _p7));
+};
+var _krisajenkins$remotedata$RemoteData$Loading = {ctor: 'Loading'};
+var _krisajenkins$remotedata$RemoteData$NotAsked = {ctor: 'NotAsked'};
+var _krisajenkins$remotedata$RemoteData$map = F2(
+	function (f, data) {
+		var _p9 = data;
+		switch (_p9.ctor) {
+			case 'Success':
+				return _krisajenkins$remotedata$RemoteData$Success(
+					f(_p9._0));
+			case 'Loading':
+				return _krisajenkins$remotedata$RemoteData$Loading;
+			case 'NotAsked':
+				return _krisajenkins$remotedata$RemoteData$NotAsked;
+			default:
+				return _krisajenkins$remotedata$RemoteData$Failure(_p9._0);
+		}
+	});
+var _krisajenkins$remotedata$RemoteData$toMaybe = function (_p10) {
+	return A2(
+		_krisajenkins$remotedata$RemoteData$withDefault,
+		_elm_lang$core$Maybe$Nothing,
+		A2(_krisajenkins$remotedata$RemoteData$map, _elm_lang$core$Maybe$Just, _p10));
+};
+var _krisajenkins$remotedata$RemoteData$mapError = F2(
+	function (f, data) {
+		var _p11 = data;
+		switch (_p11.ctor) {
+			case 'Success':
+				return _krisajenkins$remotedata$RemoteData$Success(_p11._0);
+			case 'Failure':
+				return _krisajenkins$remotedata$RemoteData$Failure(
+					f(_p11._0));
+			case 'Loading':
+				return _krisajenkins$remotedata$RemoteData$Loading;
+			default:
+				return _krisajenkins$remotedata$RemoteData$NotAsked;
+		}
+	});
+var _krisajenkins$remotedata$RemoteData$mapBoth = F3(
+	function (successFn, errorFn, data) {
+		var _p12 = data;
+		switch (_p12.ctor) {
+			case 'Success':
+				return _krisajenkins$remotedata$RemoteData$Success(
+					successFn(_p12._0));
+			case 'Failure':
+				return _krisajenkins$remotedata$RemoteData$Failure(
+					errorFn(_p12._0));
+			case 'Loading':
+				return _krisajenkins$remotedata$RemoteData$Loading;
+			default:
+				return _krisajenkins$remotedata$RemoteData$NotAsked;
+		}
+	});
+var _krisajenkins$remotedata$RemoteData$andThen = F2(
+	function (f, data) {
+		var _p13 = data;
+		switch (_p13.ctor) {
+			case 'Success':
+				return f(_p13._0);
+			case 'Failure':
+				return _krisajenkins$remotedata$RemoteData$Failure(_p13._0);
+			case 'NotAsked':
+				return _krisajenkins$remotedata$RemoteData$NotAsked;
+			default:
+				return _krisajenkins$remotedata$RemoteData$Loading;
+		}
+	});
+var _krisajenkins$remotedata$RemoteData$andMap = F2(
+	function (wrappedValue, wrappedFunction) {
+		var _p14 = wrappedFunction;
+		switch (_p14.ctor) {
+			case 'Success':
+				return A2(_krisajenkins$remotedata$RemoteData$map, _p14._0, wrappedValue);
+			case 'Failure':
+				return _krisajenkins$remotedata$RemoteData$Failure(_p14._0);
+			case 'Loading':
+				return _krisajenkins$remotedata$RemoteData$Loading;
+			default:
+				return _krisajenkins$remotedata$RemoteData$NotAsked;
+		}
+	});
+var _krisajenkins$remotedata$RemoteData$map2 = F3(
+	function (f, a, b) {
+		return A2(
+			_krisajenkins$remotedata$RemoteData$andMap,
+			b,
+			A2(_krisajenkins$remotedata$RemoteData$map, f, a));
+	});
+var _krisajenkins$remotedata$RemoteData$map3 = F4(
+	function (f, a, b, c) {
+		return A2(
+			_krisajenkins$remotedata$RemoteData$andMap,
+			c,
+			A2(
+				_krisajenkins$remotedata$RemoteData$andMap,
+				b,
+				A2(_krisajenkins$remotedata$RemoteData$map, f, a)));
+	});
+var _krisajenkins$remotedata$RemoteData$append = F2(
+	function (a, b) {
+		return A2(
+			_krisajenkins$remotedata$RemoteData$andMap,
+			b,
+			A2(
+				_krisajenkins$remotedata$RemoteData$map,
+				F2(
+					function (v0, v1) {
+						return {ctor: '_Tuple2', _0: v0, _1: v1};
+					}),
+				a));
+	});
+var _krisajenkins$remotedata$RemoteData$update = F2(
+	function (f, remoteData) {
+		var _p15 = remoteData;
+		switch (_p15.ctor) {
+			case 'Success':
+				var _p16 = f(_p15._0);
+				var first = _p16._0;
+				var second = _p16._1;
+				return {
+					ctor: '_Tuple2',
+					_0: _krisajenkins$remotedata$RemoteData$Success(first),
+					_1: second
+				};
+			case 'NotAsked':
+				return {ctor: '_Tuple2', _0: _krisajenkins$remotedata$RemoteData$NotAsked, _1: _elm_lang$core$Platform_Cmd$none};
+			case 'Loading':
+				return {ctor: '_Tuple2', _0: _krisajenkins$remotedata$RemoteData$Loading, _1: _elm_lang$core$Platform_Cmd$none};
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: _krisajenkins$remotedata$RemoteData$Failure(_p15._0),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+		}
+	});
+
 var _nikolakasev$hello_elm$Model$processWithIngredients = '\n  {\n    \"id\": \"e0e86e03-eb25-4ff7-ab48-a7653655e666\",\n    \"ingredients\": [\n      {\"name\": \"OvenTemperature\", \"value\": \"285\"},\n      {\"name\": \"SpaghettiWeight\", \"value\": \"150\"},\n      {\"name\": \"ChefName\", \"value\": \"John Doe\"},\n      {\"name\": \"OrderId\", \"value\": \"ABC-341234\"}\n    ]\n  }\n  ';
 var _nikolakasev$hello_elm$Model$recipes = '{\n      \"value\": [\n        {\n          \"name\": \"Carbonara cake\",\n          \"events\": [\n            {\n              \"name\": \"SpaghettiCookedAndDrained\",\n              \"ingredients\": [\"Spaghetti\", \"ResidualWaterInMil\"]\n            },\n            {\n              \"name\": \"ChefInfo\",\n              \"ingredients\": [\"ChefEmail\", \"ChefPhoneNumber\", \"ChefBirthDate\"]\n            },\n            {\n              \"name\": \"OvenFailure\",\n              \"ingredients\": [\"Reason\"]\n            },\n            {\n              \"name\": \"Maybe\",\n              \"description\": \"Give your advice\",\n              \"ingredients\": [\"AnswerWithYesOrNo\"]\n            }\n          ]\n        }\n      ]\n    }';
 var _nikolakasev$hello_elm$Model$processes = '{\n    \"value\" : [\n        {\n          \"id\": \"436fdbcf-2505-4483-adc7-88b8e3b7c370\",\n          \"recipe\": \"Carbonara cake\",\n          \"started\": \"2017-05-24T15:55:11Z\",\n          \"events\": [\"OvenPreheated\", \"ChefInfo\"]\n        },\n        {\n          \"id\": \"e0e86e03-eb25-4ff7-ab48-a7653655e666\",\n          \"recipe\": \"Carbonara cake\",\n          \"started\": \"2017-04-20T15:53:06Z\",\n          \"events\": [\"OvenPreheated\", \"OvenFailure\"]\n        },\n        {\n          \"id\": \"e1e86e03-eb25-4ff7-ab48-a7653655e666\",\n          \"recipe\": \"Carbonara cake\",\n          \"started\": \"2017-04-21T15:53:06Z\",\n          \"events\": [\"OvenPreheated\", \"OvenFailure\"]\n        }]\n    }';
@@ -9155,6 +9732,37 @@ var _nikolakasev$hello_elm$Model$recipesDecoder = A3(
 	_elm_lang$core$Json_Decode$list(_nikolakasev$hello_elm$Model$recipeDecoder),
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_nikolakasev$hello_elm$Model$Recipes));
 var _nikolakasev$hello_elm$Model$testRecipes = A2(_elm_lang$core$Json_Decode$decodeString, _nikolakasev$hello_elm$Model$recipesDecoder, _nikolakasev$hello_elm$Model$recipes);
+
+var _nikolakasev$hello_elm$Messages$Rejected = function (a) {
+	return {ctor: 'Rejected', _0: a};
+};
+var _nikolakasev$hello_elm$Messages$Approved = function (a) {
+	return {ctor: 'Approved', _0: a};
+};
+var _nikolakasev$hello_elm$Messages$OnFetchDetails = function (a) {
+	return {ctor: 'OnFetchDetails', _0: a};
+};
+var _nikolakasev$hello_elm$Messages$OnFetchProcesses = function (a) {
+	return {ctor: 'OnFetchProcesses', _0: a};
+};
+
+var _nikolakasev$hello_elm$Api$fetchDetailsUrl = 'http://localhost:3000/process';
+var _nikolakasev$hello_elm$Api$fetchProcessesUrl = 'http://localhost:3000/processes';
+var _nikolakasev$hello_elm$Api$fetchDetails = function (process) {
+	return A2(
+		_elm_lang$core$Platform_Cmd$map,
+		_nikolakasev$hello_elm$Messages$OnFetchDetails,
+		_krisajenkins$remotedata$RemoteData$sendRequest(
+			A2(
+				_elm_lang$http$Http$get,
+				A2(_elm_lang$core$Basics_ops['++'], _nikolakasev$hello_elm$Api$fetchProcessesUrl, process),
+				_nikolakasev$hello_elm$Model$processWithIngredientsDecoder)));
+};
+var _nikolakasev$hello_elm$Api$fetchProcesses = A2(
+	_elm_lang$core$Platform_Cmd$map,
+	_nikolakasev$hello_elm$Messages$OnFetchProcesses,
+	_krisajenkins$remotedata$RemoteData$sendRequest(
+		A2(_elm_lang$http$Http$get, _nikolakasev$hello_elm$Api$fetchProcessesUrl, _nikolakasev$hello_elm$Model$processesDecoder)));
 
 var _nikolakasev$hello_elm$Main$filterProcess = F3(
 	function (list, forRecipe, withEvent) {
@@ -9270,6 +9878,68 @@ var _nikolakasev$hello_elm$Main$loading = A2(
 			}),
 		_1: {ctor: '[]'}
 	});
+var _nikolakasev$hello_elm$Main$actionButtons = function (processId) {
+	return {
+		ctor: '::',
+		_0: A2(
+			_elm_lang$html$Html$a,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('waves-effect waves-light btn-floating'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Events$onClick(
+						_nikolakasev$hello_elm$Messages$Approved(processId)),
+					_1: {ctor: '[]'}
+				}
+			},
+			{
+				ctor: '::',
+				_0: _nikolakasev$hello_elm$Main$icon('thumb_up'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('Approve'),
+					_1: {ctor: '[]'}
+				}
+			}),
+		_1: {
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$span,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(' '),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$a,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('waves-effect waves-light btn-floating red'),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Events$onClick(
+								_nikolakasev$hello_elm$Messages$Rejected(processId)),
+							_1: {ctor: '[]'}
+						}
+					},
+					{
+						ctor: '::',
+						_0: _nikolakasev$hello_elm$Main$icon('thumb_down'),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('Reject'),
+							_1: {ctor: '[]'}
+						}
+					}),
+				_1: {ctor: '[]'}
+			}
+		}
+	};
+};
 var _nikolakasev$hello_elm$Main$supportingInfo = function (ingredients) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -9310,123 +9980,6 @@ var _nikolakasev$hello_elm$Main$actionToText = function (action) {
 		default:
 			return 'Second opinion required.';
 	}
-};
-var _nikolakasev$hello_elm$Main$update = F2(
-	function (msg, model) {
-		var _p1 = msg;
-		if (_p1.ctor === 'Approved') {
-			return model;
-		} else {
-			return model;
-		}
-	});
-var _nikolakasev$hello_elm$Main$model = {ctor: '[]'};
-var _nikolakasev$hello_elm$Main$ActionableProcess = F4(
-	function (a, b, c, d) {
-		return {id: a, name: b, action: c, info: d};
-	});
-var _nikolakasev$hello_elm$Main$ActionableRecipe = F4(
-	function (a, b, c, d) {
-		return {eventOfInterest: a, action: b, compensatingEvent: c, ingredient: d};
-	});
-var _nikolakasev$hello_elm$Main$SecondOpinion = {ctor: 'SecondOpinion'};
-var _nikolakasev$hello_elm$Main$FourEyePrinciple = {ctor: 'FourEyePrinciple'};
-var _nikolakasev$hello_elm$Main$Doubt = {ctor: 'Doubt'};
-var _nikolakasev$hello_elm$Main$someProcess = {
-	id: '7fbedbdf-c017-4fc9-b30a-3d356e12d0bf',
-	name: 'Carbonara cake',
-	action: _nikolakasev$hello_elm$Main$Doubt,
-	info: {
-		ctor: '::',
-		_0: {name: 'Oven Temperature', value: '285'},
-		_1: {
-			ctor: '::',
-			_0: {name: 'Chef Name', value: 'John Doe'},
-			_1: {ctor: '[]'}
-		}
-	}
-};
-var _nikolakasev$hello_elm$Main$config = _elm_lang$core$Dict$fromList(
-	{
-		ctor: '::',
-		_0: {
-			ctor: '_Tuple2',
-			_0: 'Carbonara cake',
-			_1: {eventOfInterest: 'OvenFailure', action: _nikolakasev$hello_elm$Main$Doubt, compensatingEvent: 'Maybe', ingredient: 'AnswerWithYesOrNo'}
-		},
-		_1: {ctor: '[]'}
-	});
-var _nikolakasev$hello_elm$Main$test = A2(
-	_elm_lang$core$Result$map,
-	A2(_elm_lang$core$Basics$flip, _nikolakasev$hello_elm$Main$determineActions, _nikolakasev$hello_elm$Main$config),
-	_nikolakasev$hello_elm$Model$testProcesses);
-var _nikolakasev$hello_elm$Main$Rejected = function (a) {
-	return {ctor: 'Rejected', _0: a};
-};
-var _nikolakasev$hello_elm$Main$Approved = function (a) {
-	return {ctor: 'Approved', _0: a};
-};
-var _nikolakasev$hello_elm$Main$actionButtons = function (processId) {
-	return {
-		ctor: '::',
-		_0: A2(
-			_elm_lang$html$Html$a,
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$class('waves-effect waves-light btn-floating'),
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$html$Html_Events$onClick(
-						_nikolakasev$hello_elm$Main$Approved(processId)),
-					_1: {ctor: '[]'}
-				}
-			},
-			{
-				ctor: '::',
-				_0: _nikolakasev$hello_elm$Main$icon('thumb_up'),
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$html$Html$text('Approve'),
-					_1: {ctor: '[]'}
-				}
-			}),
-		_1: {
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$span,
-				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text(' '),
-					_1: {ctor: '[]'}
-				}),
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$a,
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$class('waves-effect waves-light btn-floating red'),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$html$Html_Events$onClick(
-								_nikolakasev$hello_elm$Main$Rejected(processId)),
-							_1: {ctor: '[]'}
-						}
-					},
-					{
-						ctor: '::',
-						_0: _nikolakasev$hello_elm$Main$icon('thumb_down'),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$html$Html$text('Reject'),
-							_1: {ctor: '[]'}
-						}
-					}),
-				_1: {ctor: '[]'}
-			}
-		}
-	};
 };
 var _nikolakasev$hello_elm$Main$actionableCard = function (forProcess) {
 	return A2(
@@ -9502,32 +10055,87 @@ var _nikolakasev$hello_elm$Main$actionableCard = function (forProcess) {
 		});
 };
 var _nikolakasev$hello_elm$Main$view = function (model) {
-	return A2(
-		_elm_lang$html$Html$div,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('row'),
-			_1: {ctor: '[]'}
-		},
-		A2(
-			_elm_lang$core$List$map,
-			_nikolakasev$hello_elm$Main$actionableCard,
-			{
-				ctor: '::',
-				_0: _nikolakasev$hello_elm$Main$someProcess,
-				_1: {ctor: '[]'}
-			}));
+	var _p1 = model.processes;
+	switch (_p1.ctor) {
+		case 'Loading':
+			return _nikolakasev$hello_elm$Main$loading;
+		case 'Success':
+			return _nikolakasev$hello_elm$Main$error(
+				_elm_lang$core$Basics$toString(_p1._0));
+		default:
+			return A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('row'),
+					_1: {ctor: '[]'}
+				},
+				A2(_elm_lang$core$List$map, _nikolakasev$hello_elm$Main$actionableCard, model.actionables));
+	}
 };
-var _nikolakasev$hello_elm$Main$main = _elm_lang$html$Html$beginnerProgram(
-	{
-		view: _nikolakasev$hello_elm$Main$view,
-		model: {
+var _nikolakasev$hello_elm$Main$update = F2(
+	function (msg, model) {
+		var _p2 = msg;
+		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+	});
+var _nikolakasev$hello_elm$Main$subscriptions = function (model) {
+	return _elm_lang$core$Platform_Sub$none;
+};
+var _nikolakasev$hello_elm$Main$ActionableProcess = F4(
+	function (a, b, c, d) {
+		return {id: a, name: b, action: c, info: d};
+	});
+var _nikolakasev$hello_elm$Main$Model = F3(
+	function (a, b, c) {
+		return {processes: a, actionables: b, details: c};
+	});
+var _nikolakasev$hello_elm$Main$ActionableRecipe = F4(
+	function (a, b, c, d) {
+		return {eventOfInterest: a, action: b, compensatingEvent: c, ingredient: d};
+	});
+var _nikolakasev$hello_elm$Main$SecondOpinion = {ctor: 'SecondOpinion'};
+var _nikolakasev$hello_elm$Main$FourEyePrinciple = {ctor: 'FourEyePrinciple'};
+var _nikolakasev$hello_elm$Main$Doubt = {ctor: 'Doubt'};
+var _nikolakasev$hello_elm$Main$someProcess = {
+	id: '7fbedbdf-c017-4fc9-b30a-3d356e12d0bf',
+	name: 'Carbonara cake',
+	action: _nikolakasev$hello_elm$Main$Doubt,
+	info: {
+		ctor: '::',
+		_0: {name: 'Oven Temperature', value: '285'},
+		_1: {
 			ctor: '::',
-			_0: _nikolakasev$hello_elm$Main$someProcess,
+			_0: {name: 'Chef Name', value: 'John Doe'},
 			_1: {ctor: '[]'}
+		}
+	}
+};
+var _nikolakasev$hello_elm$Main$model = {
+	processes: _krisajenkins$remotedata$RemoteData$Loading,
+	actionables: {
+		ctor: '::',
+		_0: _nikolakasev$hello_elm$Main$someProcess,
+		_1: {ctor: '[]'}
+	},
+	details: 0
+};
+var _nikolakasev$hello_elm$Main$init = {ctor: '_Tuple2', _0: _nikolakasev$hello_elm$Main$model, _1: _nikolakasev$hello_elm$Api$fetchProcesses};
+var _nikolakasev$hello_elm$Main$main = _elm_lang$html$Html$program(
+	{init: _nikolakasev$hello_elm$Main$init, view: _nikolakasev$hello_elm$Main$view, update: _nikolakasev$hello_elm$Main$update, subscriptions: _nikolakasev$hello_elm$Main$subscriptions})();
+var _nikolakasev$hello_elm$Main$config = _elm_lang$core$Dict$fromList(
+	{
+		ctor: '::',
+		_0: {
+			ctor: '_Tuple2',
+			_0: 'Carbonara cake',
+			_1: {eventOfInterest: 'OvenFailure', action: _nikolakasev$hello_elm$Main$Doubt, compensatingEvent: 'Maybe', ingredient: 'AnswerWithYesOrNo'}
 		},
-		update: _nikolakasev$hello_elm$Main$update
-	})();
+		_1: {ctor: '[]'}
+	});
+var _nikolakasev$hello_elm$Main$test = A2(
+	_elm_lang$core$Result$map,
+	A2(_elm_lang$core$Basics$flip, _nikolakasev$hello_elm$Main$determineActions, _nikolakasev$hello_elm$Main$config),
+	_nikolakasev$hello_elm$Model$testProcesses);
 
 var Elm = {};
 Elm['Main'] = Elm['Main'] || {};
