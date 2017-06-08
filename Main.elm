@@ -56,6 +56,9 @@ model =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        OnFetchProcesses response ->
+            ( { model | processes = response }, Cmd.none )
+
         _ ->
             ( model, Cmd.none )
 
@@ -63,14 +66,21 @@ update msg model =
 view : Model -> Html Msg
 view model =
     case model.processes of
+        RemoteData.NotAsked ->
+            text ""
+
         RemoteData.Loading ->
             loading
 
         RemoteData.Success p ->
-            error <| toString p
+            error "Loaded."
 
-        _ ->
-            div [ class "row" ] <| List.map actionableCard model.actionables
+        RemoteData.Failure err ->
+            error <| toString err
+
+
+
+--  div [ class "row" ] <| List.map actionableCard model.actionables
 
 
 actionableCard : ActionableProcess -> Html Msg

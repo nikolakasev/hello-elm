@@ -10057,26 +10057,31 @@ var _nikolakasev$hello_elm$Main$actionableCard = function (forProcess) {
 var _nikolakasev$hello_elm$Main$view = function (model) {
 	var _p1 = model.processes;
 	switch (_p1.ctor) {
+		case 'NotAsked':
+			return _elm_lang$html$Html$text('');
 		case 'Loading':
 			return _nikolakasev$hello_elm$Main$loading;
 		case 'Success':
+			return _nikolakasev$hello_elm$Main$error('Loaded.');
+		default:
 			return _nikolakasev$hello_elm$Main$error(
 				_elm_lang$core$Basics$toString(_p1._0));
-		default:
-			return A2(
-				_elm_lang$html$Html$div,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class('row'),
-					_1: {ctor: '[]'}
-				},
-				A2(_elm_lang$core$List$map, _nikolakasev$hello_elm$Main$actionableCard, model.actionables));
 	}
 };
 var _nikolakasev$hello_elm$Main$update = F2(
 	function (msg, model) {
 		var _p2 = msg;
-		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+		if (_p2.ctor === 'OnFetchProcesses') {
+			return {
+				ctor: '_Tuple2',
+				_0: _elm_lang$core$Native_Utils.update(
+					model,
+					{processes: _p2._0}),
+				_1: _elm_lang$core$Platform_Cmd$none
+			};
+		} else {
+			return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+		}
 	});
 var _nikolakasev$hello_elm$Main$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$none;
