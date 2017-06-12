@@ -10139,46 +10139,33 @@ var _nikolakasev$hello_elm$Main$actionableCard = function (forProcess) {
 			_1: {ctor: '[]'}
 		});
 };
-var _nikolakasev$hello_elm$Main$view = function (model) {
-	var _p4 = model.processes;
-	switch (_p4.ctor) {
-		case 'NotAsked':
-			return _elm_lang$html$Html$text('');
-		case 'Loading':
-			return _nikolakasev$hello_elm$Main$loading;
-		case 'Success':
-			return _nikolakasev$hello_elm$Main$error('Loaded.');
-		default:
-			return _nikolakasev$hello_elm$Main$error(
-				_elm_lang$core$Basics$toString(_p4._0));
-	}
-};
 var _nikolakasev$hello_elm$Main$update = F2(
 	function (msg, model) {
-		var _p5 = msg;
-		if (_p5.ctor === 'OnFetchProcesses') {
+		var _p4 = msg;
+		if (_p4.ctor === 'OnFetchProcesses') {
 			return {
 				ctor: '_Tuple2',
 				_0: _elm_lang$core$Native_Utils.update(
 					model,
-					{processes: _p5._0}),
+					{processes: _p4._0}),
 				_1: _elm_lang$core$Platform_Cmd$none
 			};
 		} else {
 			return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 		}
 	});
+var _nikolakasev$hello_elm$Main$model = {processes: _krisajenkins$remotedata$RemoteData$Loading};
 var _nikolakasev$hello_elm$Main$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$none;
 };
+var _nikolakasev$hello_elm$Main$init = {ctor: '_Tuple2', _0: _nikolakasev$hello_elm$Main$model, _1: _nikolakasev$hello_elm$Api$fetchProcesses};
 var _nikolakasev$hello_elm$Main$ActionableProcess = F4(
 	function (a, b, c, d) {
 		return {id: a, name: b, action: c, info: d};
 	});
-var _nikolakasev$hello_elm$Main$Model = F3(
-	function (a, b, c) {
-		return {processes: a, actionables: b, details: c};
-	});
+var _nikolakasev$hello_elm$Main$Model = function (a) {
+	return {processes: a};
+};
 var _nikolakasev$hello_elm$Main$ActionableRecipe = F4(
 	function (a, b, c, d) {
 		return {eventOfInterest: a, action: b, compensatingEvent: c, ingredient: d};
@@ -10201,18 +10188,6 @@ var _nikolakasev$hello_elm$Main$someProcess = {
 			}
 		})
 };
-var _nikolakasev$hello_elm$Main$model = {
-	processes: _krisajenkins$remotedata$RemoteData$Loading,
-	actionables: {
-		ctor: '::',
-		_0: _nikolakasev$hello_elm$Main$someProcess,
-		_1: {ctor: '[]'}
-	},
-	details: 0
-};
-var _nikolakasev$hello_elm$Main$init = {ctor: '_Tuple2', _0: _nikolakasev$hello_elm$Main$model, _1: _nikolakasev$hello_elm$Api$fetchProcesses};
-var _nikolakasev$hello_elm$Main$main = _elm_lang$html$Html$program(
-	{init: _nikolakasev$hello_elm$Main$init, view: _nikolakasev$hello_elm$Main$view, update: _nikolakasev$hello_elm$Main$update, subscriptions: _nikolakasev$hello_elm$Main$subscriptions})();
 var _nikolakasev$hello_elm$Main$config = _elm_lang$core$Dict$fromList(
 	{
 		ctor: '::',
@@ -10223,6 +10198,35 @@ var _nikolakasev$hello_elm$Main$config = _elm_lang$core$Dict$fromList(
 		},
 		_1: {ctor: '[]'}
 	});
+var _nikolakasev$hello_elm$Main$view = function (model) {
+	var _p5 = model.processes;
+	switch (_p5.ctor) {
+		case 'NotAsked':
+			return _elm_lang$html$Html$text('');
+		case 'Loading':
+			return _nikolakasev$hello_elm$Main$loading;
+		case 'Success':
+			var actionables = A2(_nikolakasev$hello_elm$Main$determineActions, _p5._0, _nikolakasev$hello_elm$Main$config);
+			var _p6 = _elm_lang$core$List$isEmpty(actionables);
+			if (_p6 === true) {
+				return _nikolakasev$hello_elm$Main$noProcessesFound;
+			} else {
+				return A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('row'),
+						_1: {ctor: '[]'}
+					},
+					A2(_elm_lang$core$List$map, _nikolakasev$hello_elm$Main$actionableCard, actionables));
+			}
+		default:
+			return _nikolakasev$hello_elm$Main$error(
+				_elm_lang$core$Basics$toString(_p5._0));
+	}
+};
+var _nikolakasev$hello_elm$Main$main = _elm_lang$html$Html$program(
+	{init: _nikolakasev$hello_elm$Main$init, view: _nikolakasev$hello_elm$Main$view, update: _nikolakasev$hello_elm$Main$update, subscriptions: _nikolakasev$hello_elm$Main$subscriptions})();
 var _nikolakasev$hello_elm$Main$test = A2(
 	_elm_lang$core$Result$map,
 	A2(_elm_lang$core$Basics$flip, _nikolakasev$hello_elm$Main$determineActions, _nikolakasev$hello_elm$Main$config),

@@ -36,7 +36,7 @@ someProcess =
 
 
 type alias Model =
-    { processes : WebData Processes, actionables : List ActionableProcess, details : Int }
+    { processes : WebData Processes }
 
 
 init : ( Model, Cmd Msg )
@@ -51,7 +51,7 @@ subscriptions model =
 
 model : Model
 model =
-    { processes = RemoteData.Loading, actionables = [ someProcess ], details = 0 }
+    { processes = RemoteData.Loading }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -74,8 +74,18 @@ view model =
             loading
 
         RemoteData.Success p ->
-            error "Loaded."
+            let
+                actionables =
+                    determineActions p config
+            in
+                case List.isEmpty actionables of
+                    True ->
+                        noProcessesFound
 
+                    False ->
+                        div [ class "row" ] <| List.map actionableCard actionables
+
+        --error "loaded."
         RemoteData.Failure err ->
             error <| toString err
 
