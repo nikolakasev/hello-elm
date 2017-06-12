@@ -215,15 +215,10 @@ determineActions forProcesses withConfig =
             List.map (flip processToActionable config) (filterProcess forProcesses recipe config.eventOfInterest)
         )
         withConfig
-        --extract all actionable processes from the map
+        -- turn to a list, so can it be flat mapped
         |> Dict.toList
+        -- extract all actionable processes into a single list
         |> flatMap (\( recipe, processes ) -> processes)
-
-
-
---|> Dict.map
--- convert into an actionable process
---|> Dict.map (\recipe ( processes, config ) -> recipe)
 
 
 processToActionable : Process -> ActionableRecipe -> ActionableProcess
