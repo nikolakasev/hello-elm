@@ -9837,6 +9837,25 @@ var _nikolakasev$hello_elm$Main$noProcessesFound = A2(
 			}),
 		_1: {ctor: '[]'}
 	});
+var _nikolakasev$hello_elm$Main$infoLoading = A2(
+	_elm_lang$html$Html$div,
+	{
+		ctor: '::',
+		_0: _elm_lang$html$Html_Attributes$class('progress'),
+		_1: {ctor: '[]'}
+	},
+	{
+		ctor: '::',
+		_0: A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('indeterminate'),
+				_1: {ctor: '[]'}
+			},
+			{ctor: '[]'}),
+		_1: {ctor: '[]'}
+	});
 var _nikolakasev$hello_elm$Main$loading = A2(
 	_elm_lang$html$Html$div,
 	{
@@ -9981,6 +10000,14 @@ var _nikolakasev$hello_elm$Main$actionToText = function (action) {
 			return 'Second opinion required.';
 	}
 };
+var _nikolakasev$hello_elm$Main$loadingOrInfo = function (list) {
+	var _p1 = list;
+	if (_p1.ctor === 'Just') {
+		return _nikolakasev$hello_elm$Main$supportingInfo(_p1._0);
+	} else {
+		return _nikolakasev$hello_elm$Main$infoLoading;
+	}
+};
 var _nikolakasev$hello_elm$Main$actionableCard = function (forProcess) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -10036,7 +10063,7 @@ var _nikolakasev$hello_elm$Main$actionableCard = function (forProcess) {
 										}),
 									_1: {
 										ctor: '::',
-										_0: _nikolakasev$hello_elm$Main$supportingInfo(forProcess.info),
+										_0: _nikolakasev$hello_elm$Main$loadingOrInfo(forProcess.info),
 										_1: {
 											ctor: '::',
 											_0: A2(
@@ -10055,8 +10082,8 @@ var _nikolakasev$hello_elm$Main$actionableCard = function (forProcess) {
 		});
 };
 var _nikolakasev$hello_elm$Main$view = function (model) {
-	var _p1 = model.processes;
-	switch (_p1.ctor) {
+	var _p2 = model.processes;
+	switch (_p2.ctor) {
 		case 'NotAsked':
 			return _elm_lang$html$Html$text('');
 		case 'Loading':
@@ -10065,18 +10092,18 @@ var _nikolakasev$hello_elm$Main$view = function (model) {
 			return _nikolakasev$hello_elm$Main$error('Loaded.');
 		default:
 			return _nikolakasev$hello_elm$Main$error(
-				_elm_lang$core$Basics$toString(_p1._0));
+				_elm_lang$core$Basics$toString(_p2._0));
 	}
 };
 var _nikolakasev$hello_elm$Main$update = F2(
 	function (msg, model) {
-		var _p2 = msg;
-		if (_p2.ctor === 'OnFetchProcesses') {
+		var _p3 = msg;
+		if (_p3.ctor === 'OnFetchProcesses') {
 			return {
 				ctor: '_Tuple2',
 				_0: _elm_lang$core$Native_Utils.update(
 					model,
-					{processes: _p2._0}),
+					{processes: _p3._0}),
 				_1: _elm_lang$core$Platform_Cmd$none
 			};
 		} else {
@@ -10105,15 +10132,16 @@ var _nikolakasev$hello_elm$Main$someProcess = {
 	id: '7fbedbdf-c017-4fc9-b30a-3d356e12d0bf',
 	name: 'Carbonara cake',
 	action: _nikolakasev$hello_elm$Main$Doubt,
-	info: {
-		ctor: '::',
-		_0: {name: 'Oven Temperature', value: '285'},
-		_1: {
+	info: _elm_lang$core$Maybe$Just(
+		{
 			ctor: '::',
-			_0: {name: 'Chef Name', value: 'John Doe'},
-			_1: {ctor: '[]'}
-		}
-	}
+			_0: {name: 'Oven Temperature', value: '285'},
+			_1: {
+				ctor: '::',
+				_0: {name: 'Chef Name', value: 'John Doe'},
+				_1: {ctor: '[]'}
+			}
+		})
 };
 var _nikolakasev$hello_elm$Main$model = {
 	processes: _krisajenkins$remotedata$RemoteData$Loading,

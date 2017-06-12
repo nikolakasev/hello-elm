@@ -26,12 +26,12 @@ type Action
 
 
 type alias ActionableProcess =
-    { id : Id, name : String, action : Action, info : List Ingredient }
+    { id : Id, name : String, action : Action, info : Maybe (List Ingredient) }
 
 
 someProcess : ActionableProcess
 someProcess =
-    { id = "7fbedbdf-c017-4fc9-b30a-3d356e12d0bf", name = "Carbonara cake", action = Doubt, info = [ { name = "Oven Temperature", value = "285" }, { name = "Chef Name", value = "John Doe" } ] }
+    { id = "7fbedbdf-c017-4fc9-b30a-3d356e12d0bf", name = "Carbonara cake", action = Doubt, info = Just [ { name = "Oven Temperature", value = "285" }, { name = "Chef Name", value = "John Doe" } ] }
 
 
 type alias Model =
@@ -90,12 +90,22 @@ actionableCard forProcess =
             [ div [ class "card-content" ] <|
                 [ h5 [ class "truncate" ] [ text forProcess.name ]
                 , blockquote [] [ text <| actionToText forProcess.action ]
-                , supportingInfo forProcess.info
+                , loadingOrInfo forProcess.info
                 , br [] []
                 ]
                     ++ actionButtons forProcess.id
             ]
         ]
+
+
+loadingOrInfo : Maybe (List Ingredient) -> Html msg
+loadingOrInfo list =
+    case list of
+        Just ingredients ->
+            supportingInfo ingredients
+
+        Nothing ->
+            infoLoading
 
 
 actionToText : Action -> String
@@ -136,6 +146,10 @@ actionButtons processId =
     ]
 
 
+
+{- shows the green circle rotating at the top of the page, used on initial page load -}
+
+
 loading : Html msg
 loading =
     div [ class "preloader-wrapper small active" ]
@@ -146,6 +160,16 @@ loading =
             --  , div [ class "circle-clipper right" ] [ div [ class "circle" ] [] ]
             ]
         ]
+
+
+
+{- shows a progress bar in a card, used when loading ingregients for a process -}
+
+
+infoLoading : Html msg
+infoLoading =
+    div [ class "progress" ]
+        [ div [ class "indeterminate" ] [] ]
 
 
 noProcessesFound : Html msg
