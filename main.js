@@ -5837,6 +5837,39 @@ var _NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required = F3(
 			decoder);
 	});
 
+var _ccapndave$elm_flat_map$List_FlatMap$join = A2(
+	_elm_lang$core$List$foldr,
+	F2(
+		function (x, y) {
+			return A2(_elm_lang$core$Basics_ops['++'], x, y);
+		}),
+	{ctor: '[]'});
+var _ccapndave$elm_flat_map$List_FlatMap$flatMap = F2(
+	function (f, list) {
+		return _ccapndave$elm_flat_map$List_FlatMap$join(
+			A2(_elm_lang$core$List$map, f, list));
+	});
+var _ccapndave$elm_flat_map$List_FlatMap$flatMap2 = F3(
+	function (f, list1, list2) {
+		return _ccapndave$elm_flat_map$List_FlatMap$join(
+			A3(_elm_lang$core$List$map2, f, list1, list2));
+	});
+var _ccapndave$elm_flat_map$List_FlatMap$flatMap3 = F4(
+	function (f, list1, list2, list3) {
+		return _ccapndave$elm_flat_map$List_FlatMap$join(
+			A4(_elm_lang$core$List$map3, f, list1, list2, list3));
+	});
+var _ccapndave$elm_flat_map$List_FlatMap$flatMap4 = F5(
+	function (f, list1, list2, list3, list4) {
+		return _ccapndave$elm_flat_map$List_FlatMap$join(
+			A5(_elm_lang$core$List$map4, f, list1, list2, list3, list4));
+	});
+var _ccapndave$elm_flat_map$List_FlatMap$flatMap5 = F6(
+	function (f, list1, list2, list3, list4, list5) {
+		return _ccapndave$elm_flat_map$List_FlatMap$join(
+			A6(_elm_lang$core$List$map5, f, list1, list2, list3, list4, list5));
+	});
+
 var _elm_lang$core$Set$foldr = F3(
 	function (f, b, _p0) {
 		var _p1 = _p0;
@@ -6454,6 +6487,29 @@ var _elm_community$json_extra$Json_Decode_Extra$fromResult = function (result) {
 		return _elm_lang$core$Json_Decode$fail(_p0._0);
 	}
 };
+var _elm_community$json_extra$Json_Decode_Extra$parseInt = A2(
+	_elm_lang$core$Json_Decode$andThen,
+	function (_p1) {
+		return _elm_community$json_extra$Json_Decode_Extra$fromResult(
+			_elm_lang$core$String$toInt(_p1));
+	},
+	_elm_lang$core$Json_Decode$string);
+var _elm_community$json_extra$Json_Decode_Extra$parseFloat = A2(
+	_elm_lang$core$Json_Decode$andThen,
+	function (_p2) {
+		return _elm_community$json_extra$Json_Decode_Extra$fromResult(
+			_elm_lang$core$String$toFloat(_p2));
+	},
+	_elm_lang$core$Json_Decode$string);
+var _elm_community$json_extra$Json_Decode_Extra$doubleEncoded = function (decoder) {
+	return A2(
+		_elm_lang$core$Json_Decode$andThen,
+		function (_p3) {
+			return _elm_community$json_extra$Json_Decode_Extra$fromResult(
+				A2(_elm_lang$core$Json_Decode$decodeString, decoder, _p3));
+		},
+		_elm_lang$core$Json_Decode$string);
+};
 var _elm_community$json_extra$Json_Decode_Extra$sequenceHelp = F2(
 	function (decoders, jsonValues) {
 		return (!_elm_lang$core$Native_Utils.eq(
@@ -6479,12 +6535,15 @@ var _elm_community$json_extra$Json_Decode_Extra$sequence = function (decoders) {
 var _elm_community$json_extra$Json_Decode_Extra$optionalField = F2(
 	function (fieldName, decoder) {
 		var finishDecoding = function (json) {
-			var _p1 = A2(
+			var _p4 = A2(
 				_elm_lang$core$Json_Decode$decodeValue,
 				A2(_elm_lang$core$Json_Decode$field, fieldName, _elm_lang$core$Json_Decode$value),
 				json);
-			if (_p1.ctor === 'Ok') {
-				return A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Maybe$Just, decoder);
+			if (_p4.ctor === 'Ok') {
+				return A2(
+					_elm_lang$core$Json_Decode$map,
+					_elm_lang$core$Maybe$Just,
+					A2(_elm_lang$core$Json_Decode$field, fieldName, decoder));
 			} else {
 				return _elm_lang$core$Json_Decode$succeed(_elm_lang$core$Maybe$Nothing);
 			}
@@ -6494,30 +6553,27 @@ var _elm_community$json_extra$Json_Decode_Extra$optionalField = F2(
 var _elm_community$json_extra$Json_Decode_Extra$withDefault = F2(
 	function (fallback, decoder) {
 		return A2(
-			_elm_lang$core$Json_Decode$andThen,
-			function (_p2) {
-				return _elm_lang$core$Json_Decode$succeed(
-					A2(_elm_lang$core$Maybe$withDefault, fallback, _p2));
-			},
+			_elm_lang$core$Json_Decode$map,
+			_elm_lang$core$Maybe$withDefault(fallback),
 			_elm_lang$core$Json_Decode$maybe(decoder));
 	});
 var _elm_community$json_extra$Json_Decode_Extra$decodeDictFromTuples = F2(
 	function (keyDecoder, tuples) {
-		var _p3 = tuples;
-		if (_p3.ctor === '[]') {
+		var _p5 = tuples;
+		if (_p5.ctor === '[]') {
 			return _elm_lang$core$Json_Decode$succeed(_elm_lang$core$Dict$empty);
 		} else {
-			var _p4 = A2(_elm_lang$core$Json_Decode$decodeString, keyDecoder, _p3._0._0);
-			if (_p4.ctor === 'Ok') {
+			var _p6 = A2(_elm_lang$core$Json_Decode$decodeString, keyDecoder, _p5._0._0);
+			if (_p6.ctor === 'Ok') {
 				return A2(
 					_elm_lang$core$Json_Decode$andThen,
-					function (_p5) {
+					function (_p7) {
 						return _elm_lang$core$Json_Decode$succeed(
-							A3(_elm_lang$core$Dict$insert, _p4._0, _p3._0._1, _p5));
+							A3(_elm_lang$core$Dict$insert, _p6._0, _p5._0._1, _p7));
 					},
-					A2(_elm_community$json_extra$Json_Decode_Extra$decodeDictFromTuples, keyDecoder, _p3._1));
+					A2(_elm_community$json_extra$Json_Decode_Extra$decodeDictFromTuples, keyDecoder, _p5._1));
 			} else {
-				return _elm_lang$core$Json_Decode$fail(_p4._0);
+				return _elm_lang$core$Json_Decode$fail(_p6._0);
 			}
 		}
 	});
@@ -6525,21 +6581,13 @@ var _elm_community$json_extra$Json_Decode_Extra$dict2 = F2(
 	function (keyDecoder, valueDecoder) {
 		return A2(
 			_elm_lang$core$Json_Decode$andThen,
-			function (_p6) {
-				return A2(
-					_elm_community$json_extra$Json_Decode_Extra$decodeDictFromTuples,
-					keyDecoder,
-					_elm_lang$core$Dict$toList(_p6));
-			},
-			_elm_lang$core$Json_Decode$dict(valueDecoder));
+			_elm_community$json_extra$Json_Decode_Extra$decodeDictFromTuples(keyDecoder),
+			_elm_lang$core$Json_Decode$keyValuePairs(valueDecoder));
 	});
 var _elm_community$json_extra$Json_Decode_Extra$set = function (decoder) {
 	return A2(
-		_elm_lang$core$Json_Decode$andThen,
-		function (_p7) {
-			return _elm_lang$core$Json_Decode$succeed(
-				_elm_lang$core$Set$fromList(_p7));
-		},
+		_elm_lang$core$Json_Decode$map,
+		_elm_lang$core$Set$fromList,
 		_elm_lang$core$Json_Decode$list(decoder));
 };
 var _elm_community$json_extra$Json_Decode_Extra$date = A2(
@@ -9764,6 +9812,10 @@ var _nikolakasev$hello_elm$Api$fetchProcesses = A2(
 	_krisajenkins$remotedata$RemoteData$sendRequest(
 		A2(_elm_lang$http$Http$get, _nikolakasev$hello_elm$Api$fetchProcessesUrl, _nikolakasev$hello_elm$Model$processesDecoder)));
 
+var _nikolakasev$hello_elm$Main$processToActionable = F2(
+	function (process, config) {
+		return {id: process.id, name: process.recipe, action: config.action, info: _elm_lang$core$Maybe$Nothing};
+	});
 var _nikolakasev$hello_elm$Main$filterProcess = F3(
 	function (list, forRecipe, withEvent) {
 		return A2(
@@ -9776,16 +9828,22 @@ var _nikolakasev$hello_elm$Main$filterProcess = F3(
 var _nikolakasev$hello_elm$Main$determineActions = F2(
 	function (forProcesses, withConfig) {
 		return A2(
-			_elm_lang$core$Dict$map,
-			F2(
-				function (recipeName, actionableRecipe) {
-					return {
-						ctor: '_Tuple2',
-						_0: A3(_nikolakasev$hello_elm$Main$filterProcess, forProcesses, recipeName, actionableRecipe.eventOfInterest),
-						_1: actionableRecipe
-					};
-				}),
-			withConfig);
+			_ccapndave$elm_flat_map$List_FlatMap$flatMap,
+			function (_p0) {
+				var _p1 = _p0;
+				return _p1._1;
+			},
+			_elm_lang$core$Dict$toList(
+				A2(
+					_elm_lang$core$Dict$map,
+					F2(
+						function (recipe, config) {
+							return A2(
+								_elm_lang$core$List$map,
+								A2(_elm_lang$core$Basics$flip, _nikolakasev$hello_elm$Main$processToActionable, config),
+								A3(_nikolakasev$hello_elm$Main$filterProcess, forProcesses, recipe, config.eventOfInterest));
+						}),
+					withConfig)));
 	});
 var _nikolakasev$hello_elm$Main$icon = function (name) {
 	return A2(
@@ -9837,7 +9895,7 @@ var _nikolakasev$hello_elm$Main$noProcessesFound = A2(
 			}),
 		_1: {ctor: '[]'}
 	});
-var _nikolakasev$hello_elm$Main$infoLoading = A2(
+var _nikolakasev$hello_elm$Main$cardProgress = A2(
 	_elm_lang$html$Html$div,
 	{
 		ctor: '::',
@@ -9990,8 +10048,8 @@ var _nikolakasev$hello_elm$Main$supportingInfo = function (ingredients) {
 			ingredients));
 };
 var _nikolakasev$hello_elm$Main$actionToText = function (action) {
-	var _p0 = action;
-	switch (_p0.ctor) {
+	var _p2 = action;
+	switch (_p2.ctor) {
 		case 'Doubt':
 			return 'Maybe happened.';
 		case 'FourEyePrinciple':
@@ -10001,11 +10059,11 @@ var _nikolakasev$hello_elm$Main$actionToText = function (action) {
 	}
 };
 var _nikolakasev$hello_elm$Main$loadingOrInfo = function (list) {
-	var _p1 = list;
-	if (_p1.ctor === 'Just') {
-		return _nikolakasev$hello_elm$Main$supportingInfo(_p1._0);
+	var _p3 = list;
+	if (_p3.ctor === 'Just') {
+		return _nikolakasev$hello_elm$Main$supportingInfo(_p3._0);
 	} else {
-		return _nikolakasev$hello_elm$Main$infoLoading;
+		return _nikolakasev$hello_elm$Main$cardProgress;
 	}
 };
 var _nikolakasev$hello_elm$Main$actionableCard = function (forProcess) {
@@ -10082,8 +10140,8 @@ var _nikolakasev$hello_elm$Main$actionableCard = function (forProcess) {
 		});
 };
 var _nikolakasev$hello_elm$Main$view = function (model) {
-	var _p2 = model.processes;
-	switch (_p2.ctor) {
+	var _p4 = model.processes;
+	switch (_p4.ctor) {
 		case 'NotAsked':
 			return _elm_lang$html$Html$text('');
 		case 'Loading':
@@ -10092,18 +10150,18 @@ var _nikolakasev$hello_elm$Main$view = function (model) {
 			return _nikolakasev$hello_elm$Main$error('Loaded.');
 		default:
 			return _nikolakasev$hello_elm$Main$error(
-				_elm_lang$core$Basics$toString(_p2._0));
+				_elm_lang$core$Basics$toString(_p4._0));
 	}
 };
 var _nikolakasev$hello_elm$Main$update = F2(
 	function (msg, model) {
-		var _p3 = msg;
-		if (_p3.ctor === 'OnFetchProcesses') {
+		var _p5 = msg;
+		if (_p5.ctor === 'OnFetchProcesses') {
 			return {
 				ctor: '_Tuple2',
 				_0: _elm_lang$core$Native_Utils.update(
 					model,
-					{processes: _p3._0}),
+					{processes: _p5._0}),
 				_1: _elm_lang$core$Platform_Cmd$none
 			};
 		} else {

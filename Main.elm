@@ -8,6 +8,7 @@ import Model exposing (Id, Ingredient, Processes, Process, ProcessWithIngredient
 import Messages exposing (..)
 import Api
 import RemoteData exposing (WebData)
+import List.FlatMap exposing (flatMap)
 
 
 main : Program Never Model Msg
@@ -105,7 +106,7 @@ loadingOrInfo list =
             supportingInfo ingredients
 
         Nothing ->
-            infoLoading
+            cardProgress
 
 
 actionToText : Action -> String
@@ -166,8 +167,8 @@ loading =
 {- shows a progress bar in a card, used when loading ingregients for a process -}
 
 
-infoLoading : Html msg
-infoLoading =
+cardProgress : Html msg
+cardProgress =
     div [ class "progress" ]
         [ div [ class "indeterminate" ] [] ]
 
@@ -206,12 +207,31 @@ config =
     Dict.fromList [ ( "Carbonara cake", { eventOfInterest = "OvenFailure", action = Doubt, compensatingEvent = "Maybe", ingredient = "AnswerWithYesOrNo" } ) ]
 
 
-determineActions : Processes -> Dict String ActionableRecipe -> Dict String ( List Process, ActionableRecipe )
+determineActions : Processes -> Dict String ActionableRecipe -> List ActionableProcess
 determineActions forProcesses withConfig =
-    Dict.map (\recipeName actionableRecipe -> ( filterProcess forProcesses recipeName actionableRecipe.eventOfInterest, actionableRecipe )) withConfig
+    -- filter processes containing an event of interest and turn them into actionable processes
+    Dict.map
+        (\recipe config ->
+            List.map (flip processToActionable config) (filterProcess forProcesses recipe config.eventOfInterest)
+        )
+        withConfig
+        --extract all actionable processes from the map
+        |> Dict.toList
+        |> flatMap (\( recipe, processes ) -> processes)
 
 
-test : Result String (Dict String ( List Process, ActionableRecipe ))
+
+--|> Dict.map
+-- convert into an actionable process
+--|> Dict.map (\recipe ( processes, config ) -> recipe)
+
+
+processToActionable : Process -> ActionableRecipe -> ActionableProcess
+processToActionable process config =
+    { id = process.id, name = process.recipe, action = config.action, info = Nothing }
+
+
+test : Result String (List ActionableProcess)
 test =
     -- pass each process from testProcesses as the first parameter to determineActions
     Result.map (flip determineActions config) testProcesses
