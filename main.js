@@ -9812,6 +9812,10 @@ var _nikolakasev$hello_elm$Api$fetchProcesses = A2(
 	_krisajenkins$remotedata$RemoteData$sendRequest(
 		A2(_elm_lang$http$Http$get, _nikolakasev$hello_elm$Api$fetchProcessesUrl, _nikolakasev$hello_elm$Model$processesDecoder)));
 
+var _nikolakasev$hello_elm$Main$enrichActionable = F2(
+	function (processes, info) {
+		return processes;
+	});
 var _nikolakasev$hello_elm$Main$processToActionable = F2(
 	function (process, config) {
 		return {id: process.id, name: process.recipe, action: config.action, info: _elm_lang$core$Maybe$Nothing};
@@ -10207,8 +10211,8 @@ var _nikolakasev$hello_elm$Main$view = function (model) {
 			return _nikolakasev$hello_elm$Main$loading;
 		case 'Success':
 			var actionables = A2(_nikolakasev$hello_elm$Main$determineActions, _p5._0, _nikolakasev$hello_elm$Main$config);
-			var _p6 = _elm_lang$core$List$isEmpty(actionables);
-			if (_p6 === true) {
+			var _p6 = actionables;
+			if (_p6.ctor === '[]') {
 				return _nikolakasev$hello_elm$Main$noProcessesFound;
 			} else {
 				return A2(

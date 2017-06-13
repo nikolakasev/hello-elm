@@ -1,6 +1,6 @@
 module Main exposing (..)
 
-import Html exposing (Html, button, div, text, h4, h5, blockquote, p, br, a, i, span)
+import Html exposing (Html, div, text, h4, h5, blockquote, p, br, a, i, span)
 import Html.Attributes exposing (class, style)
 import Html.Events exposing (onClick)
 import Dict exposing (Dict)
@@ -20,10 +20,6 @@ type Action
     = Doubt -- when a maybe occurs
     | FourEyePrinciple -- when two persons need to give approval
     | SecondOpinion -- when the first person gave the approval or rejected
-
-
-
--- + event + ingredient
 
 
 type alias ActionableProcess =
@@ -78,14 +74,13 @@ view model =
                 actionables =
                     determineActions p config
             in
-                case List.isEmpty actionables of
-                    True ->
+                case actionables of
+                    [] ->
                         noProcessesFound
 
-                    False ->
+                    _ ->
                         div [ class "row" ] <| List.map actionableCard actionables
 
-        --error "loaded."
         RemoteData.Failure err ->
             error <| toString err
 
@@ -234,6 +229,18 @@ determineActions forProcesses withConfig =
 processToActionable : Process -> ActionableRecipe -> ActionableProcess
 processToActionable process config =
     { id = process.id, name = process.recipe, action = config.action, info = Nothing }
+
+
+enrichActionable : List ActionableProcess -> ProcessWithIngredients -> List ActionableProcess
+enrichActionable processes info =
+    List.map
+        (\p ->
+            if info.id == p.id then
+                { p | info = (Just info.ingredients) }
+            else
+                p
+        )
+        processes
 
 
 test : Result String (List ActionableProcess)
