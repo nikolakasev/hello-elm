@@ -23,16 +23,16 @@ type Action
 
 
 type alias ActionableProcess =
-    { id : Id, name : String, action : Action, info : Maybe (List Ingredient) }
+    { id : Id, name : String, action : Action, details : Maybe (List Ingredient) }
 
 
 someProcess : ActionableProcess
 someProcess =
-    { id = "7fbedbdf-c017-4fc9-b30a-3d356e12d0bf", name = "Carbonara cake", action = Doubt, info = Just [ { name = "Oven Temperature", value = "285" }, { name = "Chef Name", value = "John Doe" } ] }
+    { id = "7fbedbdf-c017-4fc9-b30a-3d356e12d0bf", name = "Carbonara cake", action = Doubt, details = Just [ { name = "Oven Temperature", value = "285" }, { name = "Chef Name", value = "John Doe" } ] }
 
 
 type alias Model =
-    { processes : WebData Processes }
+    { processes : WebData Processes, actionables : List ActionableProcess }
 
 
 init : ( Model, Cmd Msg )
@@ -47,12 +47,15 @@ subscriptions model =
 
 model : Model
 model =
-    { processes = RemoteData.Loading }
+    { processes = RemoteData.Loading, actionables = [] }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        OnFetchProcesses (RemoteData.Success p) ->
+            ( { model | processes = RemoteData.Success p, actionables = determineActions p config }, Cmd.none )
+
         OnFetchProcesses response ->
             ( { model | processes = response }, Cmd.none )
 
@@ -62,26 +65,20 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    case model.processes of
-        RemoteData.NotAsked ->
+    case ( model.processes, model.actionables ) of
+        ( RemoteData.NotAsked, _ ) ->
             text ""
 
-        RemoteData.Loading ->
+        ( RemoteData.Loading, _ ) ->
             loading
 
-        RemoteData.Success p ->
-            let
-                actionables =
-                    determineActions p config
-            in
-                case actionables of
-                    [] ->
-                        noProcessesFound
+        ( RemoteData.Success _, [] ) ->
+            noProcessesFound
 
-                    _ ->
-                        div [ class "row" ] <| List.map actionableCard actionables
+        ( RemoteData.Success _, a ) ->
+            div [ class "row" ] <| List.map actionableCard a
 
-        RemoteData.Failure err ->
+        ( RemoteData.Failure err, _ ) ->
             error <| toString err
 
 
@@ -96,7 +93,7 @@ actionableCard forProcess =
             [ div [ class "card-content" ] <|
                 [ h5 [ class "truncate" ] [ text forProcess.name ]
                 , blockquote [] [ text <| actionToText forProcess.action ]
-                , loadingOrInfo forProcess.info
+                , loadingOrInfo forProcess.details
                 , br [] []
                 ]
                     ++ actionButtons forProcess.id
@@ -181,7 +178,7 @@ cardProgress =
 noProcessesFound : Html msg
 noProcessesFound =
     div []
-        [ h4 [] [ text "No actionable proceses found." ]
+        [ h4 [] [ text "No actionable processes found." ]
         ]
 
 
@@ -228,19 +225,33 @@ determineActions forProcesses withConfig =
 
 processToActionable : Process -> ActionableRecipe -> ActionableProcess
 processToActionable process config =
-    { id = process.id, name = process.recipe, action = config.action, info = Nothing }
+    { id = process.id, name = process.recipe, action = config.action, details = Nothing }
 
 
-enrichActionable : List ActionableProcess -> ProcessWithIngredients -> List ActionableProcess
-enrichActionable processes info =
+enrichActionable : ProcessWithIngredients -> List ActionableProcess -> List ActionableProcess
+enrichActionable details processes =
     List.map
         (\p ->
-            if info.id == p.id then
-                { p | info = (Just info.ingredients) }
+            if details.id == p.id then
+                { p | details = (Just details.ingredients) }
             else
                 p
         )
         processes
+
+
+
+{- for a list of actionables, figure out if any still needs detailed information -}
+
+
+commandForDetails : List ActionableProcess -> Cmd Msg
+commandForDetails processes =
+    -- filter all actionables that still have no detail information
+    List.filter (\p -> p.details == Nothing) processes
+        -- take the first one and generate a command to call the API to enrich it
+        |> List.head
+        |> Maybe.map (\p -> Api.fetchDetails p.id)
+        |> Maybe.withDefault Cmd.none
 
 
 test : Result String (List ActionableProcess)
