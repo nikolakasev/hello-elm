@@ -20,7 +20,7 @@ fetchProcessesUrl =
 
 fetchDetails : String -> Cmd Msg
 fetchDetails process =
-    Http.get (fetchProcessesUrl ++ process) processWithIngredientsDecoder
+    Http.get (fetchDetailsUrl ++ "/" ++ process) processWithIngredientsDecoder
         |> RemoteData.sendRequest
         |> Cmd.map Messages.OnFetchDetails
 

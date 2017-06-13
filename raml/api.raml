@@ -69,24 +69,21 @@ baseUri: http://localhost
                   }
                 ]
               }
-/process/{id}:
-  get:
-    description: Get a list of ingredients for a process
-    responses:
-      200:
-        body:
-          application/json:
-            example: |
-              {
-                "id": "e0e86e03-eb25-4ff7-ab48-a7653655e666",
-                "ingredients": [
-                  {"name": "OvenTemperature", "value": "285"},
-                  {"name": "SpaghettiWeight", "value": "150"},
-                  {"name": "ChefName", "value": "John Doe"},
-                  {"name": "OrderId", "value": "ABC-341234"}
-                ]
-              }
-  post:
-    description: Notify a process that an event happened
-    responses:
-      204:
+/process:
+  /{id}:
+    get:
+      description: Get a list of ingredients for a process
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                {
+                  "id": "e0e86e03-eb25-4ff7-ab48-a7653655e666",
+                  "ingredients": [
+                    {"name": "OvenTemperature", "value": "285"},
+                    {"name": "SpaghettiWeight", "value": "150"},
+                    {"name": "ChefName", "value": "John Doe"},
+                    {"name": "OrderId", "value": "ABC-341234"}
+                  ]
+                }

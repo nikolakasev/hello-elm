@@ -54,10 +54,21 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         OnFetchProcesses (RemoteData.Success p) ->
-            ( { model | processes = RemoteData.Success p, actionables = determineActions p config }, Cmd.none )
+            let
+                a =
+                    determineActions p config
+            in
+                ( { model | processes = RemoteData.Success p, actionables = a }, commandForDetails a )
 
         OnFetchProcesses response ->
             ( { model | processes = response }, Cmd.none )
+
+        OnFetchDetails (RemoteData.Success d) ->
+            let
+                a =
+                    enrichActionable d model.actionables
+            in
+                ( { model | actionables = [ someProcess ] }, commandForDetails a )
 
         _ ->
             ( model, Cmd.none )

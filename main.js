@@ -9795,7 +9795,6 @@ var _nikolakasev$hello_elm$Messages$OnFetchProcesses = function (a) {
 };
 
 var _nikolakasev$hello_elm$Api$fetchDetailsUrl = 'http://localhost:3000/process';
-var _nikolakasev$hello_elm$Api$fetchProcessesUrl = 'http://localhost:3000/processes';
 var _nikolakasev$hello_elm$Api$fetchDetails = function (process) {
 	return A2(
 		_elm_lang$core$Platform_Cmd$map,
@@ -9803,9 +9802,13 @@ var _nikolakasev$hello_elm$Api$fetchDetails = function (process) {
 		_krisajenkins$remotedata$RemoteData$sendRequest(
 			A2(
 				_elm_lang$http$Http$get,
-				A2(_elm_lang$core$Basics_ops['++'], _nikolakasev$hello_elm$Api$fetchProcessesUrl, process),
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					_nikolakasev$hello_elm$Api$fetchDetailsUrl,
+					A2(_elm_lang$core$Basics_ops['++'], '/', process)),
 				_nikolakasev$hello_elm$Model$processWithIngredientsDecoder)));
 };
+var _nikolakasev$hello_elm$Api$fetchProcessesUrl = 'http://localhost:3000/processes';
 var _nikolakasev$hello_elm$Api$fetchProcesses = A2(
 	_elm_lang$core$Platform_Cmd$map,
 	_nikolakasev$hello_elm$Messages$OnFetchProcesses,
@@ -10245,31 +10248,56 @@ var _nikolakasev$hello_elm$Main$config = _elm_lang$core$Dict$fromList(
 var _nikolakasev$hello_elm$Main$update = F2(
 	function (msg, model) {
 		var _p5 = msg;
-		if (_p5.ctor === 'OnFetchProcesses') {
-			if (_p5._0.ctor === 'Success') {
-				var _p6 = _p5._0._0;
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{
-							processes: _krisajenkins$remotedata$RemoteData$Success(_p6),
-							actionables: A2(_nikolakasev$hello_elm$Main$determineActions, _p6, _nikolakasev$hello_elm$Main$config)
-						}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			} else {
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{processes: _p5._0}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
+		_v4_3:
+		do {
+			switch (_p5.ctor) {
+				case 'OnFetchProcesses':
+					if (_p5._0.ctor === 'Success') {
+						var _p6 = _p5._0._0;
+						var a = A2(_nikolakasev$hello_elm$Main$determineActions, _p6, _nikolakasev$hello_elm$Main$config);
+						return {
+							ctor: '_Tuple2',
+							_0: _elm_lang$core$Native_Utils.update(
+								model,
+								{
+									processes: _krisajenkins$remotedata$RemoteData$Success(_p6),
+									actionables: a
+								}),
+							_1: _nikolakasev$hello_elm$Main$commandForDetails(a)
+						};
+					} else {
+						return {
+							ctor: '_Tuple2',
+							_0: _elm_lang$core$Native_Utils.update(
+								model,
+								{processes: _p5._0}),
+							_1: _elm_lang$core$Platform_Cmd$none
+						};
+					}
+				case 'OnFetchDetails':
+					if (_p5._0.ctor === 'Success') {
+						var a = A2(_nikolakasev$hello_elm$Main$enrichActionable, _p5._0._0, model.actionables);
+						return {
+							ctor: '_Tuple2',
+							_0: _elm_lang$core$Native_Utils.update(
+								model,
+								{
+									actionables: {
+										ctor: '::',
+										_0: _nikolakasev$hello_elm$Main$someProcess,
+										_1: {ctor: '[]'}
+									}
+								}),
+							_1: _nikolakasev$hello_elm$Main$commandForDetails(a)
+						};
+					} else {
+						break _v4_3;
+					}
+				default:
+					break _v4_3;
 			}
-		} else {
-			return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-		}
+		} while(false);
+		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 	});
 var _nikolakasev$hello_elm$Main$main = _elm_lang$html$Html$program(
 	{init: _nikolakasev$hello_elm$Main$init, view: _nikolakasev$hello_elm$Main$view, update: _nikolakasev$hello_elm$Main$update, subscriptions: _nikolakasev$hello_elm$Main$subscriptions})();
