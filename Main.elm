@@ -9,6 +9,7 @@ import Messages exposing (..)
 import Api
 import RemoteData exposing (WebData)
 import List.FlatMap exposing (flatMap)
+import Regex exposing (regex)
 
 
 main : Program Never Model Msg
@@ -269,3 +270,8 @@ test : Result String (List ActionableProcess)
 test =
     -- pass each process from testProcesses as the first parameter to determineActions
     Result.map (flip determineActions config) testProcesses
+
+
+extractDoubtAnswers : String -> List String
+extractDoubtAnswers name =
+    Regex.split Regex.All (regex "AnswerWith|Or") name |> List.filter (\s -> String.isEmpty s == False)
