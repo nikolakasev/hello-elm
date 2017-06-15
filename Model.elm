@@ -3,6 +3,7 @@ module Model exposing (..)
 import Json.Decode exposing (int, string, at, list, map, nullable, Decoder, decodeString)
 import Json.Decode.Pipeline exposing (decode, required, optional, custom)
 import Json.Decode.Extra exposing (date)
+import Json.Encode
 import Date exposing (Date)
 
 
@@ -174,3 +175,19 @@ testProcessWithIngredients =
 testRecipes : Result String Recipes
 testRecipes =
     decodeString recipesDecoder recipes
+
+
+encodeList : ProcessWithIngredients -> Json.Encode.Value
+encodeList record =
+    Json.Encode.object
+        [ ( "identifier", Json.Encode.string <| record.id )
+        , ( "baa", Json.Encode.list <| List.map encodeIngredient <| record.ingredients )
+        ]
+
+
+encodeIngredient : Ingredient -> Json.Encode.Value
+encodeIngredient record =
+    Json.Encode.object
+        [ ( "naam", Json.Encode.string <| record.name )
+        , ( "waarde", Json.Encode.string <| record.value )
+        ]
