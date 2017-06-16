@@ -56,38 +56,6 @@ ingredientDecoder =
         |> required "value" string
 
 
-type alias Event =
-    { name : String, ingredients : List String }
-
-
-eventDecoder : Decoder Event
-eventDecoder =
-    decode Event
-        |> required "name" string
-        |> required "ingredients" (list string)
-
-
-type alias Recipe =
-    { name : String, events : List Event }
-
-
-recipeDecoder : Decoder Recipe
-recipeDecoder =
-    decode Recipe
-        |> required "name" string
-        |> required "events" (list eventDecoder)
-
-
-type alias Recipes =
-    { value : List Recipe }
-
-
-recipesDecoder : Decoder Recipes
-recipesDecoder =
-    decode Recipes
-        |> required "value" (list recipeDecoder)
-
-
 
 -- what follows is test decoder functions and JSON data to use
 
@@ -117,36 +85,6 @@ processes =
     }"""
 
 
-recipes : String
-recipes =
-    """{
-      "value": [
-        {
-          "name": "Carbonara cake",
-          "events": [
-            {
-              "name": "SpaghettiCookedAndDrained",
-              "ingredients": ["Spaghetti", "ResidualWaterInMil"]
-            },
-            {
-              "name": "ChefInfo",
-              "ingredients": ["ChefEmail", "ChefPhoneNumber", "ChefBirthDate"]
-            },
-            {
-              "name": "OvenFailure",
-              "ingredients": ["Reason"]
-            },
-            {
-              "name": "Maybe",
-              "description": "Give your advice",
-              "ingredients": ["AnswerWithYesOrNo"]
-            }
-          ]
-        }
-      ]
-    }"""
-
-
 processWithIngredients : String
 processWithIngredients =
     """
@@ -172,22 +110,18 @@ testProcessWithIngredients =
     decodeString processWithIngredientsDecoder processWithIngredients
 
 
-testRecipes : Result String Recipes
-testRecipes =
-    decodeString recipesDecoder recipes
-
-
-encodeList : ProcessWithIngredients -> Json.Encode.Value
-encodeList record =
-    Json.Encode.object
-        [ ( "identifier", Json.Encode.string <| record.id )
-        , ( "baa", Json.Encode.list <| List.map encodeIngredient <| record.ingredients )
-        ]
-
-
 encodeIngredient : Ingredient -> Json.Encode.Value
 encodeIngredient record =
     Json.Encode.object
-        [ ( "naam", Json.Encode.string <| record.name )
-        , ( "waarde", Json.Encode.string <| record.value )
+        [ ( "name", Json.Encode.string <| record.name )
+        , ( "value", Json.Encode.string <| record.value )
+        ]
+
+
+encodeSensory : Id -> String -> List Ingredient -> Json.Encode.Value
+encodeSensory event forProcessId withIngredients =
+    Json.Encode.object
+        [ ( "id", Json.Encode.string <| forProcessId )
+        , ( "name", Json.Encode.string <| event )
+        , ( "ingredients", Json.Encode.list <| List.map encodeIngredient <| withIngredients )
         ]

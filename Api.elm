@@ -1,16 +1,13 @@
 module Api exposing (fetchProcesses, fetchDetails)
 
-import Http
-import RemoteData
+import RemoteData.Http exposing (get)
 import Messages exposing (Msg)
-import Model exposing (processesDecoder, processWithIngredientsDecoder)
+import Model exposing (Id, Ingredient, processesDecoder, processWithIngredientsDecoder, encodeSensory)
 
 
 fetchProcesses : Cmd Msg
 fetchProcesses =
-    Http.get fetchProcessesUrl processesDecoder
-        |> RemoteData.sendRequest
-        |> Cmd.map Messages.OnFetchProcesses
+    get fetchProcessesUrl Messages.OnFetchProcesses processesDecoder
 
 
 fetchProcessesUrl : String
@@ -18,13 +15,11 @@ fetchProcessesUrl =
     "http://localhost:3000/processes"
 
 
-fetchDetails : String -> Cmd Msg
+fetchDetails : Id -> Cmd Msg
 fetchDetails process =
-    Http.get (fetchDetailsUrl ++ "/" ++ process) processWithIngredientsDecoder
-        |> RemoteData.sendRequest
-        |> Cmd.map Messages.OnFetchDetails
+    get (processUrl ++ "/" ++ process) Messages.OnFetchDetails processWithIngredientsDecoder
 
 
-fetchDetailsUrl : String
-fetchDetailsUrl =
+processUrl : String
+processUrl =
     "http://localhost:3000/process"
