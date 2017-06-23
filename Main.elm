@@ -69,7 +69,7 @@ update msg model =
                 a =
                     enrichActionable d model.actionables
             in
-                ( { model | actionables = [ someProcess ] }, commandForDetails a )
+                ( { model | actionables = a }, commandForDetails a )
 
         _ ->
             ( model, Cmd.none )
