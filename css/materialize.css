@@ -2526,7 +2526,25 @@ nav ul a span.badge {
 
 /* This is needed for some mobile phones to display the Google Icon font properly */
 .material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
   text-rendering: optimizeLegibility;
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+  /* Support for IE. */
   font-feature-settings: 'liga'; }
 
 .container {
@@ -3266,6 +3284,10 @@ nav {
   font-family: "INGMe";
   src: local(INGMe Bold), url("../fonts/INGMe/Bold/INGMeWeb-Bold.woff2") format("woff2"), url("../fonts/INGMe/Bold/INGMeWeb-Bold.woff") format("woff");
   font-weight: bold; }
+@font-face {
+  font-family: "Material Icons";
+  src: local(Material Icons), url("../fonts/icons/MaterialIcons-Regular.woff2") format("woff2");
+  font-weight: normal; }
 a {
   text-decoration: none; }
 

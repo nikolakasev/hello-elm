@@ -53,3 +53,10 @@
         url("#{$ing-me-font-path}Bold/INGMeWeb-Bold.woff") format("woff");
     font-weight: bold;
 }
+
+@font-face {
+    font-family: "Material Icons";
+    src: local(Material Icons),
+        url("#{$icons-font-path}MaterialIcons-Regular.woff2") format("woff2");
+    font-weight: normal;
+}
