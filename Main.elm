@@ -27,9 +27,11 @@ type alias ActionableProcess =
     { id : Id, name : String, action : Action, details : Maybe (List Ingredient) }
 
 
-someProcess : ActionableProcess
-someProcess =
-    { id = "7fbedbdf-c017-4fc9-b30a-3d356e12d0bf", name = "Carbonara cake", action = Doubt, details = Just [ { name = "Oven Temperature", value = "285" }, { name = "Chef Name", value = "John Doe" } ] }
+
+-- someProcess : ActionableProcess
+-- someProcess =
+--     { id = "7fbedbdf-c017-4fc9-b30a-3d356e12d0bf", name = "Carbonara cake", action = Doubt, details = Just [ { name = "Oven Temperature", value = "285" }, { name = "Chef Name", value = "John Doe" } ] }
+--
 
 
 type alias Model =
@@ -71,6 +73,12 @@ update msg model =
             in
                 ( { model | actionables = a }, commandForDetails a )
 
+        Approved processId ->
+            ( model, Api.submitSensoryEvent (Approved processId) )
+
+        Rejected processId ->
+            ( model, Api.submitSensoryEvent (Rejected processId) )
+
         _ ->
             ( model, Cmd.none )
 
@@ -92,10 +100,6 @@ view model =
 
         ( RemoteData.Failure err, _ ) ->
             error <| toString err
-
-
-
---  div [ class "row" ] <| List.map actionableCard model.actionables
 
 
 actionableCard : ActionableProcess -> Html Msg

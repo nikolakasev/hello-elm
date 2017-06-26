@@ -1,4 +1,4 @@
-module Api exposing (fetchProcesses, fetchDetails)
+module Api exposing (fetchProcesses, fetchDetails, submitSensoryEvent)
 
 import RemoteData.Http exposing (get)
 import Messages exposing (Msg)
@@ -23,3 +23,16 @@ fetchDetails process =
 processUrl : String
 processUrl =
     "http://localhost:3000/process"
+
+
+submitSensoryEvent : Msg -> Cmd Msg
+submitSensoryEvent action =
+    case action of
+        Messages.Approved processId ->
+            Cmd.none
+
+        Messages.Rejected processId ->
+            Cmd.none
+
+        _ ->
+            Cmd.none
