@@ -59,3 +59,9 @@ Installed Facebook's watchman:
 Then watching and making:
 
 **watchman -- trigger . buildme '*.elm' -- elm-make --output=main.js**
+
+Using Express from https://expressjs.com/ for the mock API, run:
+
+**npm install express**
+**npm install body-parser**
+**node mock-api.js**
