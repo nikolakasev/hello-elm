@@ -12,7 +12,7 @@ fetchProcesses =
 
 fetchProcessesUrl : String
 fetchProcessesUrl =
-    "http://localhost:3000/processes"
+    "http://localhost:3000/api/processes"
 
 
 fetchDetails : Id -> Cmd Msg
@@ -22,7 +22,7 @@ fetchDetails process =
 
 processUrl : String
 processUrl =
-    "http://localhost:3000/process"
+    "http://localhost:3000/api/process"
 
 
 submitSensoryEvent : Msg -> Cmd Msg

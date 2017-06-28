@@ -1,0 +1,9 @@
+{
+  "id": "436fdbcf-2505-4483-adc7-88b8e3b7c370",
+  "ingredients": [
+    {"name": "OvenTemperature", "value": "295"},
+    {"name": "SpaghettiWeight", "value": "130"},
+    {"name": "ChefName", "value": "MArry Doe"},
+    {"name": "OrderId", "value": "CDE-9876"}
+  ]
+}
