@@ -14212,12 +14212,12 @@ var _nikolakasev$hello_elm$Main$processToActionable = F2(
 	function (process, config) {
 		return {id: process.id, name: process.recipe, action: config.action, details: _elm_lang$core$Maybe$Nothing};
 	});
-var _nikolakasev$hello_elm$Main$filterProcess = F3(
-	function (list, forRecipe, withEvent) {
+var _nikolakasev$hello_elm$Main$filterProcess = F4(
+	function (list, forRecipe, withEvent, notCompenstatedYet) {
 		return A2(
 			_elm_lang$core$List$filter,
 			function (p) {
-				return A2(_elm_lang$core$List$member, withEvent, p.events) && _elm_lang$core$Native_Utils.eq(p.recipe, forRecipe);
+				return A2(_elm_lang$core$List$member, withEvent, p.events) && (_elm_lang$core$Native_Utils.eq(forRecipe, p.recipe) && (!A2(_elm_lang$core$List$member, notCompenstatedYet, p.events)));
 			},
 			list.value);
 	});
@@ -14237,7 +14237,7 @@ var _nikolakasev$hello_elm$Main$determineActions = F2(
 							return A2(
 								_elm_lang$core$List$map,
 								A2(_elm_lang$core$Basics$flip, _nikolakasev$hello_elm$Main$processToActionable, config),
-								A3(_nikolakasev$hello_elm$Main$filterProcess, forProcesses, recipe, config.eventOfInterest));
+								A4(_nikolakasev$hello_elm$Main$filterProcess, forProcesses, recipe, config.eventOfInterest, config.compensatingEvent));
 						}),
 					withConfig)));
 	});

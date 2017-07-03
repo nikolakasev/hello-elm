@@ -33,7 +33,7 @@ router.get('/process/436fdbcf-2505-4483-adc7-88b8e3b7c370', function(req, res) {
 });
 
 router.get('/process/e0e86e03-eb25-4ff7-ab48-a7653655e666', function(req, res) {
-    sleep.sleep(3);
+    sleep.sleep(1);
     res.status(200).sendFile(process.cwd() + "/p1.json");
 });
 

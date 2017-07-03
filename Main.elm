@@ -215,9 +215,13 @@ type alias ActionableRecipe =
     { eventOfInterest : String, action : Action, compensatingEvent : String, ingredient : String }
 
 
-filterProcess : Processes -> String -> String -> List Process
-filterProcess list forRecipe withEvent =
-    List.filter (\p -> List.member withEvent p.events && p.recipe == forRecipe) list.value
+filterProcess : Processes -> String -> String -> String -> List Process
+filterProcess list forRecipe withEvent notCompenstatedYet =
+    List.filter
+        (\p ->
+            List.member withEvent p.events && forRecipe == p.recipe && not (List.member notCompenstatedYet p.events)
+        )
+        list.value
 
 
 config : Dict String ActionableRecipe
@@ -230,7 +234,7 @@ determineActions forProcesses withConfig =
     -- filter processes containing an event of interest and turn them into actionable processes
     Dict.map
         (\recipe config ->
-            List.map (flip processToActionable config) (filterProcess forProcesses recipe config.eventOfInterest)
+            List.map (flip processToActionable config) (filterProcess forProcesses recipe config.eventOfInterest config.compensatingEvent)
         )
         withConfig
         -- turn to a list, so can it be flat mapped
