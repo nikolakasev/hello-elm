@@ -1,8 +1,8 @@
 module Api exposing (fetchProcesses, fetchDetails, submitSensoryEvent)
 
-import RemoteData.Http exposing (get)
+import RemoteData.Http exposing (get, post)
 import Messages exposing (Msg)
-import Model exposing (Id, Ingredient, processesDecoder, processWithIngredientsDecoder, encodeSensory)
+import Model exposing (Id, Ingredient, processesDecoder, processWithIngredientsDecoder, decodeResponse, encodeSensory)
 
 
 fetchProcesses : Cmd Msg
@@ -28,11 +28,16 @@ processUrl =
 submitSensoryEvent : Msg -> Cmd Msg
 submitSensoryEvent action =
     case action of
-        Messages.Approved processId ->
-            Cmd.none
+        Messages.Approved event processId ->
+            postForSensoryEvent (event ++ "Approved") processId
 
-        Messages.Rejected processId ->
-            Cmd.none
+        Messages.Rejected event processId ->
+            postForSensoryEvent (event ++ "Rejected") processId
 
         _ ->
             Cmd.none
+
+
+postForSensoryEvent : String -> String -> Cmd Msg
+postForSensoryEvent event processId =
+    post (processUrl ++ "/" ++ processId) (Messages.OnSensorySubmit processId) decodeResponse (encodeSensory event processId [ { name = "boo", value = "haha" } ])

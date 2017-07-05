@@ -38,11 +38,13 @@ router.get('/process/e0e86e03-eb25-4ff7-ab48-a7653655e666', function(req, res) {
 });
 
 router.post('/process/e0e86e03-eb25-4ff7-ab48-a7653655e666', function(req, res) {
-    res.status(204).json({ status: 'ok' });
+  sleep.msleep(500);
+  res.json({ status: 'ok' });
 });
 
 router.post('/process/436fdbcf-2505-4483-adc7-88b8e3b7c370', function(req, res) {
-    res.status(204).json({ status: 'ok' });
+  sleep.msleep(500);
+  res.json({ status: 'ok' });
 });
 
 // more routes for our API will happen here

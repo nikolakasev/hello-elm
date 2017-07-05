@@ -14013,6 +14013,8 @@ var _ohanhi$remotedata_http$RemoteData_Http$Config = F3(
 		return {headers: a, withCredentials: b, timeout: c};
 	});
 
+var _nikolakasev$hello_elm$Model$decodeResponse = A2(_elm_lang$core$Json_Decode$field, 'status', _elm_lang$core$Json_Decode$string);
+var _nikolakasev$hello_elm$Model$okResponse = '\n    { \"status\": \"ok\"}\n    ';
 var _nikolakasev$hello_elm$Model$encodeIngredient = function (record) {
 	return _elm_lang$core$Json_Encode$object(
 		{
@@ -14063,8 +14065,8 @@ var _nikolakasev$hello_elm$Model$encodeSensory = F3(
 				}
 			});
 	});
-var _nikolakasev$hello_elm$Model$processWithIngredients = '\n  {\n    \"id\": \"e0e86e03-eb25-4ff7-ab48-a7653655e666\",\n    \"ingredients\": [\n      {\"name\": \"OvenTemperature\", \"value\": \"285\"},\n      {\"name\": \"SpaghettiWeight\", \"value\": \"150\"},\n      {\"name\": \"ChefName\", \"value\": \"John Doe\"},\n      {\"name\": \"OrderId\", \"value\": \"ABC-341234\"}\n    ]\n  }\n  ';
-var _nikolakasev$hello_elm$Model$processes = '{\n    \"value\" : [\n        {\n          \"id\": \"436fdbcf-2505-4483-adc7-88b8e3b7c370\",\n          \"recipe\": \"Carbonara cake\",\n          \"started\": \"2017-05-24T15:55:11Z\",\n          \"events\": [\"OvenPreheated\", \"ChefInfo\"]\n        },\n        {\n          \"id\": \"e0e86e03-eb25-4ff7-ab48-a7653655e666\",\n          \"recipe\": \"Carbonara cake\",\n          \"started\": \"2017-04-20T15:53:06Z\",\n          \"events\": [\"OvenPreheated\", \"OvenFailure\"]\n        },\n        {\n          \"id\": \"e1e86e03-eb25-4ff7-ab48-a7653655e666\",\n          \"recipe\": \"Carbonara cake\",\n          \"started\": \"2017-04-21T15:53:06Z\",\n          \"events\": [\"OvenPreheated\", \"OvenFailure\"]\n        }]\n    }';
+var _nikolakasev$hello_elm$Model$processWithIngredients = '\n    {\n      \"id\": \"e0e86e03-eb25-4ff7-ab48-a7653655e666\",\n      \"ingredients\": [\n        {\"name\": \"OvenTemperature\", \"value\": \"285\"},\n        {\"name\": \"SpaghettiWeight\", \"value\": \"150\"},\n        {\"name\": \"ChefName\", \"value\": \"John Doe\"},\n        {\"name\": \"OrderId\", \"value\": \"ABC-341234\"}\n      ]\n    }\n    ';
+var _nikolakasev$hello_elm$Model$processes = '\n    {\n      \"value\" : [\n          {\n            \"id\": \"436fdbcf-2505-4483-adc7-88b8e3b7c370\",\n            \"recipe\": \"Carbonara cake\",\n            \"started\": \"2017-05-24T15:55:11Z\",\n            \"events\": [\"OvenPreheated\", \"ChefInfo\"]\n          },\n          {\n            \"id\": \"e0e86e03-eb25-4ff7-ab48-a7653655e666\",\n            \"recipe\": \"Carbonara cake\",\n            \"started\": \"2017-04-20T15:53:06Z\",\n            \"events\": [\"OvenPreheated\", \"OvenFailure\"]\n          },\n          {\n            \"id\": \"e1e86e03-eb25-4ff7-ab48-a7653655e666\",\n            \"recipe\": \"Carbonara cake\",\n            \"started\": \"2017-04-21T15:53:06Z\",\n            \"events\": [\"OvenPreheated\", \"OvenFailure\"]\n          }]\n    }\n    ';
 var _nikolakasev$hello_elm$Model$Process = F4(
 	function (a, b, c, d) {
 		return {id: a, recipe: b, started: c, events: d};
@@ -14123,15 +14125,18 @@ var _nikolakasev$hello_elm$Model$processWithIngredientsDecoder = A3(
 		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_nikolakasev$hello_elm$Model$ProcessWithIngredients)));
 var _nikolakasev$hello_elm$Model$testProcessWithIngredients = A2(_elm_lang$core$Json_Decode$decodeString, _nikolakasev$hello_elm$Model$processWithIngredientsDecoder, _nikolakasev$hello_elm$Model$processWithIngredients);
 
-var _nikolakasev$hello_elm$Messages$Rejected = function (a) {
-	return {ctor: 'Rejected', _0: a};
-};
-var _nikolakasev$hello_elm$Messages$Approved = function (a) {
-	return {ctor: 'Approved', _0: a};
-};
-var _nikolakasev$hello_elm$Messages$OnSensorySubmit = function (a) {
-	return {ctor: 'OnSensorySubmit', _0: a};
-};
+var _nikolakasev$hello_elm$Messages$Rejected = F2(
+	function (a, b) {
+		return {ctor: 'Rejected', _0: a, _1: b};
+	});
+var _nikolakasev$hello_elm$Messages$Approved = F2(
+	function (a, b) {
+		return {ctor: 'Approved', _0: a, _1: b};
+	});
+var _nikolakasev$hello_elm$Messages$OnSensorySubmit = F2(
+	function (a, b) {
+		return {ctor: 'OnSensorySubmit', _0: a, _1: b};
+	});
 var _nikolakasev$hello_elm$Messages$OnFetchDetails = function (a) {
 	return {ctor: 'OnFetchDetails', _0: a};
 };
@@ -14139,18 +14144,44 @@ var _nikolakasev$hello_elm$Messages$OnFetchProcesses = function (a) {
 	return {ctor: 'OnFetchProcesses', _0: a};
 };
 
+var _nikolakasev$hello_elm$Api$processUrl = 'http://localhost:3000/api/process';
+var _nikolakasev$hello_elm$Api$postForSensoryEvent = F2(
+	function (event, processId) {
+		return A4(
+			_ohanhi$remotedata_http$RemoteData_Http$post,
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				_nikolakasev$hello_elm$Api$processUrl,
+				A2(_elm_lang$core$Basics_ops['++'], '/', processId)),
+			_nikolakasev$hello_elm$Messages$OnSensorySubmit(processId),
+			_nikolakasev$hello_elm$Model$decodeResponse,
+			A3(
+				_nikolakasev$hello_elm$Model$encodeSensory,
+				event,
+				processId,
+				{
+					ctor: '::',
+					_0: {name: 'boo', value: 'haha'},
+					_1: {ctor: '[]'}
+				}));
+	});
 var _nikolakasev$hello_elm$Api$submitSensoryEvent = function (action) {
 	var _p0 = action;
 	switch (_p0.ctor) {
 		case 'Approved':
-			return _elm_lang$core$Platform_Cmd$none;
+			return A2(
+				_nikolakasev$hello_elm$Api$postForSensoryEvent,
+				A2(_elm_lang$core$Basics_ops['++'], _p0._0, 'Approved'),
+				_p0._1);
 		case 'Rejected':
-			return _elm_lang$core$Platform_Cmd$none;
+			return A2(
+				_nikolakasev$hello_elm$Api$postForSensoryEvent,
+				A2(_elm_lang$core$Basics_ops['++'], _p0._0, 'Rejected'),
+				_p0._1);
 		default:
 			return _elm_lang$core$Platform_Cmd$none;
 	}
 };
-var _nikolakasev$hello_elm$Api$processUrl = 'http://localhost:3000/api/process';
 var _nikolakasev$hello_elm$Api$fetchDetails = function (process) {
 	return A3(
 		_ohanhi$remotedata_http$RemoteData_Http$get,
@@ -14210,7 +14241,7 @@ var _nikolakasev$hello_elm$Main$enrichActionable = F2(
 	});
 var _nikolakasev$hello_elm$Main$processToActionable = F2(
 	function (process, config) {
-		return {id: process.id, name: process.recipe, action: config.action, details: _elm_lang$core$Maybe$Nothing};
+		return {id: process.id, name: process.recipe, action: config.action, compensatingEvent: config.compensatingEvent, details: _elm_lang$core$Maybe$Nothing};
 	});
 var _nikolakasev$hello_elm$Main$filterProcess = F4(
 	function (list, forRecipe, withEvent, notCompenstatedYet) {
@@ -14351,7 +14382,7 @@ var _nikolakasev$hello_elm$Main$loading = A2(
 			}),
 		_1: {ctor: '[]'}
 	});
-var _nikolakasev$hello_elm$Main$actionButtons = function (processId) {
+var _nikolakasev$hello_elm$Main$actionButtons = function (process) {
 	return {
 		ctor: '::',
 		_0: A2(
@@ -14362,7 +14393,7 @@ var _nikolakasev$hello_elm$Main$actionButtons = function (processId) {
 				_1: {
 					ctor: '::',
 					_0: _elm_lang$html$Html_Events$onClick(
-						_nikolakasev$hello_elm$Messages$Approved(processId)),
+						A2(_nikolakasev$hello_elm$Messages$Approved, process.compensatingEvent, process.id)),
 					_1: {ctor: '[]'}
 				}
 			},
@@ -14395,7 +14426,7 @@ var _nikolakasev$hello_elm$Main$actionButtons = function (processId) {
 						_1: {
 							ctor: '::',
 							_0: _elm_lang$html$Html_Events$onClick(
-								_nikolakasev$hello_elm$Messages$Rejected(processId)),
+								A2(_nikolakasev$hello_elm$Messages$Rejected, process.compensatingEvent, process.id)),
 							_1: {ctor: '[]'}
 						}
 					},
@@ -14450,14 +14481,32 @@ var _nikolakasev$hello_elm$Main$actionToText = function (action) {
 			return 'Maybe happened.';
 		case 'FourEyePrinciple':
 			return 'Four-eye principle required.';
-		default:
+		case 'SecondOpinion':
 			return 'Second opinion required.';
+		default:
+			return '';
+	}
+};
+var _nikolakasev$hello_elm$Main$loadingOrAction = function (forProcess) {
+	var _p3 = forProcess.action;
+	if (_p3.ctor === 'Submitted') {
+		return _nikolakasev$hello_elm$Main$cardProgress;
+	} else {
+		return A2(
+			_elm_lang$html$Html$blockquote,
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text(
+					_nikolakasev$hello_elm$Main$actionToText(forProcess.action)),
+				_1: {ctor: '[]'}
+			});
 	}
 };
 var _nikolakasev$hello_elm$Main$loadingOrInfo = function (list) {
-	var _p3 = list;
-	if (_p3.ctor === 'Just') {
-		return _nikolakasev$hello_elm$Main$supportingInfo(_p3._0);
+	var _p4 = list;
+	if (_p4.ctor === 'Just') {
+		return _nikolakasev$hello_elm$Main$supportingInfo(_p4._0);
 	} else {
 		return _nikolakasev$hello_elm$Main$cardProgress;
 	}
@@ -14506,15 +14555,7 @@ var _nikolakasev$hello_elm$Main$actionableCard = function (forProcess) {
 									}),
 								_1: {
 									ctor: '::',
-									_0: A2(
-										_elm_lang$html$Html$blockquote,
-										{ctor: '[]'},
-										{
-											ctor: '::',
-											_0: _elm_lang$html$Html$text(
-												_nikolakasev$hello_elm$Main$actionToText(forProcess.action)),
-											_1: {ctor: '[]'}
-										}),
+									_0: _nikolakasev$hello_elm$Main$loadingOrAction(forProcess),
 									_1: {
 										ctor: '::',
 										_0: _nikolakasev$hello_elm$Main$loadingOrInfo(forProcess.details),
@@ -14529,21 +14570,21 @@ var _nikolakasev$hello_elm$Main$actionableCard = function (forProcess) {
 									}
 								}
 							},
-							_nikolakasev$hello_elm$Main$actionButtons(forProcess.id))),
+							_nikolakasev$hello_elm$Main$actionButtons(forProcess))),
 					_1: {ctor: '[]'}
 				}),
 			_1: {ctor: '[]'}
 		});
 };
 var _nikolakasev$hello_elm$Main$view = function (model) {
-	var _p4 = {ctor: '_Tuple2', _0: model.processes, _1: model.actionables};
-	switch (_p4._0.ctor) {
+	var _p5 = {ctor: '_Tuple2', _0: model.processes, _1: model.actionables};
+	switch (_p5._0.ctor) {
 		case 'NotAsked':
 			return _elm_lang$html$Html$text('');
 		case 'Loading':
 			return _nikolakasev$hello_elm$Main$loading;
 		case 'Success':
-			if (_p4._1.ctor === '[]') {
+			if (_p5._1.ctor === '[]') {
 				return _nikolakasev$hello_elm$Main$noProcessesFound;
 			} else {
 				return A2(
@@ -14553,11 +14594,11 @@ var _nikolakasev$hello_elm$Main$view = function (model) {
 						_0: _elm_lang$html$Html_Attributes$class('row'),
 						_1: {ctor: '[]'}
 					},
-					A2(_elm_lang$core$List$map, _nikolakasev$hello_elm$Main$actionableCard, _p4._1));
+					A2(_elm_lang$core$List$map, _nikolakasev$hello_elm$Main$actionableCard, _p5._1));
 			}
 		default:
 			return _nikolakasev$hello_elm$Main$error(
-				_elm_lang$core$Basics$toString(_p4._0._0));
+				_elm_lang$core$Basics$toString(_p5._0._0));
 	}
 };
 var _nikolakasev$hello_elm$Main$model = {
@@ -14568,18 +14609,19 @@ var _nikolakasev$hello_elm$Main$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$none;
 };
 var _nikolakasev$hello_elm$Main$init = {ctor: '_Tuple2', _0: _nikolakasev$hello_elm$Main$model, _1: _nikolakasev$hello_elm$Api$fetchProcesses};
-var _nikolakasev$hello_elm$Main$ActionableProcess = F4(
-	function (a, b, c, d) {
-		return {id: a, name: b, action: c, details: d};
+var _nikolakasev$hello_elm$Main$ActionableProcess = F5(
+	function (a, b, c, d, e) {
+		return {id: a, name: b, action: c, compensatingEvent: d, details: e};
 	});
 var _nikolakasev$hello_elm$Main$Model = F2(
 	function (a, b) {
 		return {processes: a, actionables: b};
 	});
-var _nikolakasev$hello_elm$Main$ActionableRecipe = F4(
-	function (a, b, c, d) {
-		return {eventOfInterest: a, action: b, compensatingEvent: c, ingredient: d};
+var _nikolakasev$hello_elm$Main$ActionableRecipe = F3(
+	function (a, b, c) {
+		return {eventOfInterest: a, action: b, compensatingEvent: c};
 	});
+var _nikolakasev$hello_elm$Main$Submitted = {ctor: 'Submitted'};
 var _nikolakasev$hello_elm$Main$SecondOpinion = {ctor: 'SecondOpinion'};
 var _nikolakasev$hello_elm$Main$FourEyePrinciple = {ctor: 'FourEyePrinciple'};
 var _nikolakasev$hello_elm$Main$Doubt = {ctor: 'Doubt'};
@@ -14589,26 +14631,26 @@ var _nikolakasev$hello_elm$Main$config = _elm_lang$core$Dict$fromList(
 		_0: {
 			ctor: '_Tuple2',
 			_0: 'Carbonara cake',
-			_1: {eventOfInterest: 'OvenFailure', action: _nikolakasev$hello_elm$Main$Doubt, compensatingEvent: 'Maybe', ingredient: 'AnswerWithYesOrNo'}
+			_1: {eventOfInterest: 'OvenFailure', action: _nikolakasev$hello_elm$Main$Doubt, compensatingEvent: 'Maybe'}
 		},
 		_1: {ctor: '[]'}
 	});
 var _nikolakasev$hello_elm$Main$update = F2(
 	function (msg, model) {
-		var _p5 = msg;
-		_v4_5:
+		var _p6 = msg;
+		_v5_8:
 		do {
-			switch (_p5.ctor) {
+			switch (_p6.ctor) {
 				case 'OnFetchProcesses':
-					if (_p5._0.ctor === 'Success') {
-						var _p6 = _p5._0._0;
-						var a = A2(_nikolakasev$hello_elm$Main$determineActions, _p6, _nikolakasev$hello_elm$Main$config);
+					if (_p6._0.ctor === 'Success') {
+						var _p7 = _p6._0._0;
+						var a = A2(_nikolakasev$hello_elm$Main$determineActions, _p7, _nikolakasev$hello_elm$Main$config);
 						return {
 							ctor: '_Tuple2',
 							_0: _elm_lang$core$Native_Utils.update(
 								model,
 								{
-									processes: _krisajenkins$remotedata$RemoteData$Success(_p6),
+									processes: _krisajenkins$remotedata$RemoteData$Success(_p7),
 									actionables: a
 								}),
 							_1: _nikolakasev$hello_elm$Main$commandForDetails(a)
@@ -14618,13 +14660,13 @@ var _nikolakasev$hello_elm$Main$update = F2(
 							ctor: '_Tuple2',
 							_0: _elm_lang$core$Native_Utils.update(
 								model,
-								{processes: _p5._0}),
+								{processes: _p6._0}),
 							_1: _elm_lang$core$Platform_Cmd$none
 						};
 					}
 				case 'OnFetchDetails':
-					if (_p5._0.ctor === 'Success') {
-						var a = A2(_nikolakasev$hello_elm$Main$enrichActionable, _p5._0._0, model.actionables);
+					if (_p6._0.ctor === 'Success') {
+						var a = A2(_nikolakasev$hello_elm$Main$enrichActionable, _p6._0._0, model.actionables);
 						return {
 							ctor: '_Tuple2',
 							_0: _elm_lang$core$Native_Utils.update(
@@ -14633,24 +14675,41 @@ var _nikolakasev$hello_elm$Main$update = F2(
 							_1: _nikolakasev$hello_elm$Main$commandForDetails(a)
 						};
 					} else {
-						break _v4_5;
+						break _v5_8;
+					}
+				case 'OnSensorySubmit':
+					switch (_p6._1.ctor) {
+						case 'Success':
+							return {ctor: '_Tuple2', _0: model, _1: _nikolakasev$hello_elm$Api$fetchProcesses};
+						case 'Loading':
+							return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+						case 'Failure':
+							return {
+								ctor: '_Tuple2',
+								_0: _elm_lang$core$Native_Utils.update(
+									model,
+									{
+										processes: _krisajenkins$remotedata$RemoteData$Failure(_p6._1._0)
+									}),
+								_1: _elm_lang$core$Platform_Cmd$none
+							};
+						default:
+							break _v5_8;
 					}
 				case 'Approved':
 					return {
 						ctor: '_Tuple2',
 						_0: model,
 						_1: _nikolakasev$hello_elm$Api$submitSensoryEvent(
-							_nikolakasev$hello_elm$Messages$Approved(_p5._0))
+							A2(_nikolakasev$hello_elm$Messages$Approved, _p6._0, _p6._1))
 					};
-				case 'Rejected':
+				default:
 					return {
 						ctor: '_Tuple2',
 						_0: model,
 						_1: _nikolakasev$hello_elm$Api$submitSensoryEvent(
-							_nikolakasev$hello_elm$Messages$Rejected(_p5._0))
+							A2(_nikolakasev$hello_elm$Messages$Rejected, _p6._0, _p6._1))
 					};
-				default:
-					break _v4_5;
 			}
 		} while(false);
 		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
@@ -14663,21 +14722,9 @@ var _nikolakasev$hello_elm$Main$test = A2(
 	_nikolakasev$hello_elm$Model$testProcesses);
 
 var Elm = {};
-Elm['Api'] = Elm['Api'] || {};
-if (typeof _nikolakasev$hello_elm$Api$main !== 'undefined') {
-    _nikolakasev$hello_elm$Api$main(Elm['Api'], 'Api', {"types":null,"versions":{"elm":"0.18.0"}});
-}
 Elm['Main'] = Elm['Main'] || {};
 if (typeof _nikolakasev$hello_elm$Main$main !== 'undefined') {
-    _nikolakasev$hello_elm$Main$main(Elm['Main'], 'Main', {"types":{"unions":{"Messages.Msg":{"args":[],"tags":{"OnFetchDetails":["RemoteData.WebData Model.ProcessWithIngredients"],"OnSensorySubmit":["RemoteData.WebData ()"],"OnFetchProcesses":["RemoteData.WebData Model.Processes"],"Rejected":["Model.Id"],"Approved":["Model.Id"]}},"Dict.LeafColor":{"args":[],"tags":{"LBBlack":[],"LBlack":[]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]}},"Date.Date":{"args":[],"tags":{"Date":[]}},"RemoteData.RemoteData":{"args":["e","a"],"tags":{"NotAsked":[],"Success":["a"],"Loading":[],"Failure":["e"]}},"Dict.NColor":{"args":[],"tags":{"BBlack":[],"Red":[],"NBlack":[],"Black":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String"],"NetworkError":[],"Timeout":[],"BadStatus":["Http.Response String"],"BadPayload":["String","Http.Response String"]}}},"aliases":{"Model.Id":{"args":[],"type":"String"},"Model.Ingredient":{"args":[],"type":"{ name : String, value : String }"},"RemoteData.WebData":{"args":["a"],"type":"RemoteData.RemoteData Http.Error a"},"Model.Process":{"args":[],"type":"{ id : Model.Id , recipe : String , started : Date.Date , events : List String }"},"Http.Response":{"args":["body"],"type":"{ url : String , status : { code : Int, message : String } , headers : Dict.Dict String String , body : body }"},"Model.ProcessWithIngredients":{"args":[],"type":"{ id : Model.Id, ingredients : List Model.Ingredient }"},"Model.Processes":{"args":[],"type":"{ value : List Model.Process }"}},"message":"Messages.Msg"},"versions":{"elm":"0.18.0"}});
-}
-Elm['Messages'] = Elm['Messages'] || {};
-if (typeof _nikolakasev$hello_elm$Messages$main !== 'undefined') {
-    _nikolakasev$hello_elm$Messages$main(Elm['Messages'], 'Messages', {"types":null,"versions":{"elm":"0.18.0"}});
-}
-Elm['Model'] = Elm['Model'] || {};
-if (typeof _nikolakasev$hello_elm$Model$main !== 'undefined') {
-    _nikolakasev$hello_elm$Model$main(Elm['Model'], 'Model', {"types":null,"versions":{"elm":"0.18.0"}});
+    _nikolakasev$hello_elm$Main$main(Elm['Main'], 'Main', {"types":{"unions":{"Messages.Msg":{"args":[],"tags":{"OnFetchDetails":["RemoteData.WebData Model.ProcessWithIngredients"],"OnSensorySubmit":["Model.Id","RemoteData.WebData String"],"OnFetchProcesses":["RemoteData.WebData Model.Processes"],"Rejected":["Model.Event","Model.Id"],"Approved":["Model.Event","Model.Id"]}},"Dict.LeafColor":{"args":[],"tags":{"LBBlack":[],"LBlack":[]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]}},"Date.Date":{"args":[],"tags":{"Date":[]}},"RemoteData.RemoteData":{"args":["e","a"],"tags":{"NotAsked":[],"Success":["a"],"Loading":[],"Failure":["e"]}},"Dict.NColor":{"args":[],"tags":{"BBlack":[],"Red":[],"NBlack":[],"Black":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String"],"NetworkError":[],"Timeout":[],"BadStatus":["Http.Response String"],"BadPayload":["String","Http.Response String"]}}},"aliases":{"Model.Id":{"args":[],"type":"String"},"Model.Ingredient":{"args":[],"type":"{ name : String, value : String }"},"RemoteData.WebData":{"args":["a"],"type":"RemoteData.RemoteData Http.Error a"},"Model.Process":{"args":[],"type":"{ id : Model.Id , recipe : String , started : Date.Date , events : List Model.Event }"},"Model.Event":{"args":[],"type":"String"},"Http.Response":{"args":["body"],"type":"{ url : String , status : { code : Int, message : String } , headers : Dict.Dict String String , body : body }"},"Model.ProcessWithIngredients":{"args":[],"type":"{ id : Model.Id, ingredients : List Model.Ingredient }"},"Model.Processes":{"args":[],"type":"{ value : List Model.Process }"}},"message":"Messages.Msg"},"versions":{"elm":"0.18.0"}});
 }
 
 if (typeof define === "function" && define['amd'])

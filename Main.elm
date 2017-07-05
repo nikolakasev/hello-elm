@@ -4,7 +4,7 @@ import Html exposing (Html, div, text, h4, h5, blockquote, p, br, a, i, span)
 import Html.Attributes exposing (class, style)
 import Html.Events exposing (onClick)
 import Dict exposing (Dict)
-import Model exposing (Id, Ingredient, Processes, Process, ProcessWithIngredients, testProcesses)
+import Model exposing (Id, Ingredient, Processes, Process, ProcessWithIngredients, Event, testProcesses)
 import Messages exposing (..)
 import Api
 import RemoteData exposing (WebData)
@@ -21,10 +21,11 @@ type Action
     = Doubt -- when a maybe occurs
     | FourEyePrinciple -- when two persons need to give approval
     | SecondOpinion -- when the first person gave the approval or rejected
+    | Submitted -- the user has performed an action
 
 
 type alias ActionableProcess =
-    { id : Id, name : String, action : Action, details : Maybe (List Ingredient) }
+    { id : Id, name : String, action : Action, compensatingEvent : Event, details : Maybe (List Ingredient) }
 
 
 
@@ -73,11 +74,22 @@ update msg model =
             in
                 ( { model | actionables = a }, commandForDetails a )
 
-        Approved processId ->
-            ( model, Api.submitSensoryEvent (Approved processId) )
+        OnSensorySubmit processId (RemoteData.Success _) ->
+            -- check the result message and deal with values different than an "OK"
+            ( model, Api.fetchProcesses )
 
-        Rejected processId ->
-            ( model, Api.submitSensoryEvent (Rejected processId) )
+        OnSensorySubmit processId RemoteData.Loading ->
+            -- draw loading
+            ( model, Cmd.none )
+
+        OnSensorySubmit processId (RemoteData.Failure err) ->
+            ( { model | processes = (RemoteData.Failure err) }, Cmd.none )
+
+        Approved event processId ->
+            ( model, Api.submitSensoryEvent (Approved event processId) )
+
+        Rejected event processId ->
+            ( model, Api.submitSensoryEvent (Rejected event processId) )
 
         _ ->
             ( model, Cmd.none )
@@ -108,11 +120,11 @@ actionableCard forProcess =
         [ div [ class "card" ]
             [ div [ class "card-content" ] <|
                 [ h5 [ class "truncate" ] [ text forProcess.name ]
-                , blockquote [] [ text <| actionToText forProcess.action ]
+                , loadingOrAction forProcess
                 , loadingOrInfo forProcess.details
                 , br [] []
                 ]
-                    ++ actionButtons forProcess.id
+                    ++ actionButtons forProcess
             ]
         ]
 
@@ -127,6 +139,16 @@ loadingOrInfo list =
             cardProgress
 
 
+loadingOrAction : ActionableProcess -> Html msg
+loadingOrAction forProcess =
+    case forProcess.action of
+        Submitted ->
+            cardProgress
+
+        _ ->
+            blockquote [] [ text <| actionToText forProcess.action ]
+
+
 actionToText : Action -> String
 actionToText action =
     case action of
@@ -139,17 +161,20 @@ actionToText action =
         SecondOpinion ->
             "Second opinion required."
 
+        _ ->
+            ""
+
 
 supportingInfo : List Ingredient -> Html msg
 supportingInfo ingredients =
     div [] <| List.map (\i -> p [] [ text <| String.join ": " [ i.name, i.value ] ]) ingredients
 
 
-actionButtons : Id -> List (Html Msg)
-actionButtons processId =
+actionButtons : ActionableProcess -> List (Html Msg)
+actionButtons process =
     [ a
         [ class "waves-effect waves-light btn-floating"
-        , onClick <| Approved processId
+        , onClick <| Approved process.compensatingEvent process.id
         ]
         [ icon "thumb_up"
         , text "Approve"
@@ -157,7 +182,7 @@ actionButtons processId =
     , span [] [ text " " ] -- put some space between the buttons
     , a
         [ class "waves-effect waves-light btn-floating red"
-        , onClick <| Rejected processId
+        , onClick <| Rejected process.compensatingEvent process.id
         ]
         [ icon "thumb_down"
         , text "Reject"
@@ -212,7 +237,7 @@ icon name =
 
 
 type alias ActionableRecipe =
-    { eventOfInterest : String, action : Action, compensatingEvent : String, ingredient : String }
+    { eventOfInterest : String, action : Action, compensatingEvent : String }
 
 
 filterProcess : Processes -> String -> String -> String -> List Process
@@ -226,7 +251,7 @@ filterProcess list forRecipe withEvent notCompenstatedYet =
 
 config : Dict String ActionableRecipe
 config =
-    Dict.fromList [ ( "Carbonara cake", { eventOfInterest = "OvenFailure", action = Doubt, compensatingEvent = "Maybe", ingredient = "AnswerWithYesOrNo" } ) ]
+    Dict.fromList [ ( "Carbonara cake", { eventOfInterest = "OvenFailure", action = Doubt, compensatingEvent = "Maybe" } ) ]
 
 
 determineActions : Processes -> Dict String ActionableRecipe -> List ActionableProcess
@@ -245,7 +270,7 @@ determineActions forProcesses withConfig =
 
 processToActionable : Process -> ActionableRecipe -> ActionableProcess
 processToActionable process config =
-    { id = process.id, name = process.recipe, action = config.action, details = Nothing }
+    { id = process.id, name = process.recipe, action = config.action, compensatingEvent = config.compensatingEvent, details = Nothing }
 
 
 enrichActionable : ProcessWithIngredients -> List ActionableProcess -> List ActionableProcess
