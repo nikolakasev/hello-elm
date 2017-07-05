@@ -6,9 +6,11 @@
 // call the packages we need
 var cors       = require('cors');
 var express    = require('express');        // call express
-var sleep = require('sleep');               // to simulate slow responses
+var sleep      = require('sleep');          // to simulate slow responses
+var morgan     = require('morgan')          // to log in the console
 var app        = express();                 // define our app using express
 app.use(cors());
+app.use(morgan('dev'));
 app.options('*', cors());
 var bodyParser = require('body-parser');
 
