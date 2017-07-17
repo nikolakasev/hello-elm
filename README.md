@@ -68,3 +68,7 @@ Using Express from https://expressjs.com/ for the mock API, run:
 **npm install sleep**
 **npm install morgan**
 **node mock-api.js**
+
+The end result is this:
+
+![](screenshot.png)
